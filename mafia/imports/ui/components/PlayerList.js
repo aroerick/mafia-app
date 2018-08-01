@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 
 const PlayerList = ({ township }) => (
   <div>
-    <ul>{township.map(person => <li key={person._id}> {person.name} 
+    <ul>{township.map(person => 
+    <li key={person._id}> {person.name} ---  Status: {person.alive ? 'is alive' : 'is dead'}
     {/* <input type="checkbox" 
     id={todo._id} checked={todo.completed}
      onChange = {() => handleCheckbox(todo)}/>
@@ -20,8 +21,8 @@ PlayerList.propTypes = {
     township: PropTypes.arrayOf(
         PropTypes.shape({
             _id: PropTypes.string.isRequired,
-            title: PropTypes.string.isRequired,
-            completed: PropTypes.bool.isRequired
+            name: PropTypes.string.isRequired,
+            alive: PropTypes.bool.isRequired
         })
     )
 }
