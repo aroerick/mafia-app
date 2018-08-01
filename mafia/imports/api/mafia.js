@@ -1,3 +1,3 @@
 import { Mongo } from "meteor/mongo";
 
-export const mafia = new Mongo.Collection("mafia")
+export const Mafia = new Mongo.Collection("mafia")
