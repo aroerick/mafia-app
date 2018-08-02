@@ -42,7 +42,7 @@ class App extends Component {
     return (
       <div>
         <h1> Hello Township </h1>
-        {Mafia.find({ player: currentUserId}).count() < 0 ?
+        {Mafia.find({ player: currentUserId}).count() < 1 ?
         <input
           type="text"
           ref={this.playerName}
