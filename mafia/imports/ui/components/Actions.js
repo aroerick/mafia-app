@@ -1,6 +1,6 @@
 import React from "react";
 
-const Actions = ({ township }) => {
+const Actions = township => {
     const player = township[0]
   switch (player.role) {
     case "mafia":
