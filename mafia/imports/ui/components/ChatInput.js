@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const ChatInput = ({ inputRef, handleChatSubmit }) => {
+const ChatInput = ({ inputRef, handleChatSubmit}) => {
   return (
     <div>
       <form onSubmit = {(e)=> handleChatSubmit(e)}>
