@@ -19,10 +19,12 @@ class App extends Component {
   handleChatSubmit = e => {
     e.preventDefault();
     let inputRef = this.inputRef.current;
+    let currentUser = this.props.currentUser[0]
+
     if (inputRef.value) {
       Meteor.call("messages.handleChatSubmit", {
         text: inputRef.value,
-        sender: "Bob",
+        sender: currentUser.name,
         recipient: "everyone"
       });
       this.inputRef.current.value = "";
@@ -36,13 +38,15 @@ class App extends Component {
   };
 
   render() {
-    const { township, messages, currentUserId } = this.props;
+    const { township, messages, currentUserId, currentUser } = this.props;
     // const activePlayer = township[0]
     // console.log(activePlayer, 'active player')
+    // console.log(currentUser.name)
     return (
+
       <div>
         <h1> Hello Township </h1>
-        {Mafia.find({ player: currentUserId}).count() < 1 ?
+        {Mafia.find({ player: currentUserId}).count() === 0 ?
         <input
           type="text"
           ref={this.playerName}
@@ -70,6 +74,7 @@ export default withTracker(() => {
   return {
     township: Mafia.find().fetch(),
     messages: Messages.find().fetch(),
-    currentUserId: Meteor.userId()
+    currentUserId: Meteor.userId(),
+    currentUser: Mafia.find({player: Meteor.userId()}).fetch()
   };
 })(App);

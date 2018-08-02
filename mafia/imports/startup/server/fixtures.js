@@ -5,23 +5,8 @@ import { Messages } from '../../api/messages'
 Meteor.startup(() => {
   if (Mafia.find().count() === 0) {
     Mafia.insert({
-      name: 'Pam',
+      name: 'Testing Tom',
       role: 'mafia',
-      alive: true
-    }),
-    Mafia.insert({
-      name: 'Jon',
-      role: 'mafia',
-      alive: true
-    }),
-    Mafia.insert({
-      name: 'Adam',
-      role: 'detective',
-      alive: true
-    }),
-    Mafia.insert({
-      name: 'Effat',
-      role: 'doctor',
       alive: true
     })
   }
