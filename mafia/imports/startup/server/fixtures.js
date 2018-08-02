@@ -23,17 +23,7 @@ Meteor.startup(() => {
       name: 'Effat',
       role: 'doctor',
       alive: true
-    }),
-    Mafia.insert({
-      name: 'Bob',
-      role: 'civilian',
-      alive: true
-    }),
-    Mafia.insert({
-      name: 'Sue',
-      role: 'civilian',
-      alive: true
-    });
+    })
   }
 
   if (Messages.find().count() === 0) {
