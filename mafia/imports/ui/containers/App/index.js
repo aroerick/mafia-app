@@ -16,13 +16,16 @@ class App extends Component {
     this.playerName = React.createRef();
   }
 
-  handleChatSubmit = e => {
+  handleChatSubmit = (e) => {
     e.preventDefault();
     let inputRef = this.inputRef.current;
+    let currentPlayer = this.props.township.filter(user => user.player === this.props.currentUserId)
+    console.log(theBoss, 'theboss')
+    console.log(this.props.township)
     if (inputRef.value) {
       Meteor.call("messages.handleChatSubmit", {
         text: inputRef.value,
-        sender: "Bob",
+        sender: currentPlayer[0].name,
         recipient: "everyone"
       });
       this.inputRef.current.value = "";
@@ -33,12 +36,13 @@ class App extends Component {
     let playerName = this.playerName.current;
     if (playerName.value > 1) return;
     Meteor.call("player.createNew", playerName.value);
+    // Meteor.call("player.updateCurrentUser", playerName.value);
   };
 
   render() {
     const { township, messages, currentUserId } = this.props;
-    // const activePlayer = township[0]
-    // console.log(activePlayer, 'active player')
+    const currentUser = Mafia.find({ player: currentUserId})
+console.log(currentUser)
     return (
       <div>
         <h1> Hello Township </h1>
@@ -51,15 +55,19 @@ class App extends Component {
               this.joinGame();
             }
           }}
-        /> : <div>Welcome to the game</div>
-        }
+        /> : 
+        <div>
+        <div>Welcome to the game</div>
         <PlayerList township={township} />
         <hr />////CHAT AREA////<hr />
-        <Chatbox messages={messages} />
+        <Chatbox messages={messages}/>
         <ChatInput
           inputRef={this.inputRef}
           handleChatSubmit={this.handleChatSubmit}
         />
+        </div>
+        }
+        
         {/* <Actions township={township}/> */}
       </div>
     );

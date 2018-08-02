@@ -11,6 +11,7 @@ Meteor.methods({
                 alive: true,
                 player: Meteor.userId()
             })
+            
         } else {
             console.log('Lobby full')
         }
