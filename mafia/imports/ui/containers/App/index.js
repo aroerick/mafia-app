@@ -20,8 +20,6 @@ class App extends Component {
     e.preventDefault();
     let inputRef = this.inputRef.current;
     let currentPlayer = this.props.township.filter(user => user.player === this.props.currentUserId)
-    console.log(theBoss, 'theboss')
-    console.log(this.props.township)
     if (inputRef.value) {
       Meteor.call("messages.handleChatSubmit", {
         text: inputRef.value,
