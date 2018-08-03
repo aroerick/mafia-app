@@ -22,7 +22,6 @@ class App extends Component {
     e.preventDefault();
     let inputRef = this.inputRef.current;
     let currentUser = this.props.currentUser[0];
-
     if (inputRef.value) {
       Meteor.call("messages.handleChatSubmit", {
         text: inputRef.value,
@@ -58,7 +57,6 @@ class App extends Component {
 
     return (
       <div>
-        {/* <Buttons township={township} currentUser={currentUser} /> */}
         <h1>
           {" "}
           Join the Township. Current population: {
@@ -85,6 +83,7 @@ class App extends Component {
             <ChatInput
               inputRef={this.inputRef}
               handleChatSubmit={this.handleChatSubmit}
+              isDisabled={currentUser[0].role === 'mafia' ? false : true} 
             />
             {!gamePhase[2].activePhase ? (
               ""
@@ -93,8 +92,6 @@ class App extends Component {
             )}
           </div>
         )}
-
-        {/* <Actions township={township}/> */}
       </div>
     );
   }
