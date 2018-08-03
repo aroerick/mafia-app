@@ -78,10 +78,6 @@ Meteor.methods({
         saved: true
       }
     });
-  },
-  "player.investigate"(villager) {
-    const inv = Mafia.find({ _id: villager }, {_id: 0, role: 1}).fetch()
-    console.log(inv)
   }
 });
 

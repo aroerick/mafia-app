@@ -47,17 +47,41 @@ class App extends Component {
   };
   setTarget = villager => {
     Meteor.call("player.setTarget", villager);
+    Meteor.call("messages.handleChatSubmit", {
+      sender: "Narrator",
+      recipient: "Mafia",
+      text: `You've targeted ${villager.name} for execution`
+    })
   };
   setSaved = villager => {
-    Meteor.call("player.setSaved", villager)
+    Meteor.call("player.setSaved", villager);
+    Meteor.call("messages.handleChatSubmit", {
+      sender: "Narrator",
+      recipient: "Doctor",
+      text: `You've made sure ${villager.name} will make it through the night`
+    })
   };
   investigate = villager => {
-    Meteor.call("player.investigate", villager)
-  }
+    const inv = Mafia.find({ _id: villager._id }).fetch();
+    const check = inv[0].role === "mafia" ? true : false;
+    {
+      check
+        ? Meteor.call("messages.handleChatSubmit", {
+            sender: "Narrator",
+            recipient: "Detective",
+            text: `${villager.name} is part of the Mafia`
+          })
+        : Meteor.call("messages.handleChatSubmit", {
+            sender: "Narrator",
+            recipient: "Detective",
+            text: `You have no reason to suspect ${villager.name}`
+          });
+    }
+  };
 
   handleSelect = button => {
-      console.log(button)
-  }
+    console.log(button);
+  };
 
   render() {
     const {
@@ -67,14 +91,12 @@ class App extends Component {
       gamePhase,
       currentUser
     } = this.props;
-    gamePhase.length > 4 && console.log(this.props)
+    gamePhase.length > 4 && console.log(this.props);
 
     return (
       <div>
         <h1>
-          Join the Township. Current population: {
-            this.props.township.length
-          }/6
+          Join the Township. Current population: {this.props.township.length}/6
         </h1>
         {Mafia.find({ player: currentUserId }).count() === 0 ? (
           <input
@@ -103,10 +125,9 @@ class App extends Component {
               handleChatSubmit={this.handleChatSubmit}
               isDisabled={currentUser[0].role === "mafia" ? false : true}
             />
-            { gamePhase.length > 4 && !gamePhase[2].activePhase ? (
+            {gamePhase.length > 4 && !gamePhase[2].activePhase ? (
               ""
             ) : (
-<<<<<<< HEAD
               <Buttons
                 township={township}
                 currentUser={currentUser}
@@ -114,9 +135,6 @@ class App extends Component {
                 setSaved={this.setSaved}
                 investigate={this.investigate}
               />
-=======
-              <Buttons township={township} currentUser={currentUser} handleSelect={button => this.handleSelect(button)}/>
->>>>>>> d90fac1f5b75289a43ac8211c6895f0dac7e9960
             )}
           </div>
         )}
