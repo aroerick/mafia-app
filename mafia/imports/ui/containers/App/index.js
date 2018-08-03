@@ -26,7 +26,8 @@ class App extends Component {
       Meteor.call("messages.handleChatSubmit", {
         text: inputRef.value,
         sender: currentUser.name,
-        recipient: "Everyone"
+        recipient: "Everyone",
+        role: currentUser.role
       });
       this.inputRef.current.value = "";
     }
@@ -90,6 +91,16 @@ class App extends Component {
     console.log(button);
   };
 
+filterMessages = (role) => {
+  if ( role != "mafia") {
+    let filteredMessages = this.props.messages.filter(message => (message.role != "mafia" && message.recipient != "Mafia" ))
+    return filteredMessages
+  } else {
+    let unfilteredMessages = this.props.messages
+    return unfilteredMessages
+  }
+}
+
   render() {
     const {
       township,
@@ -126,7 +137,7 @@ class App extends Component {
             </h2>
             <PlayerList township={township} />
             <hr />////CHAT AREA////<hr />
-            <Chatbox messages={messages} />
+                    <Chatbox messages={this.filterMessages(this.props.currentUser[0].role)}/>
             <ChatInput
               inputRef={this.inputRef}
               handleChatSubmit={this.handleChatSubmit}
