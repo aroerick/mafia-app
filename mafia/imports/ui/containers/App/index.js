@@ -48,7 +48,6 @@ class App extends Component {
     }
 }
 
-
 export default withTracker(() => {
     return {
       township: Mafia.find().fetch(),
