@@ -76,7 +76,7 @@ class App extends Component {
         ) : (
           <div>
             <div>Welcome to the game</div>
-            <h2> You have been assigned the role of: {this.props.currentUser[0].role} </h2>
+            <h2> Hello {this.props.currentUser[0].name}, you have been assigned the role of: {this.props.currentUser[0].role} </h2>
             <PlayerList township={township} />
             <hr />////CHAT AREA////<hr />
             <Chatbox messages={messages} />
