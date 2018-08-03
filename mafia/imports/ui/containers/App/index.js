@@ -47,12 +47,17 @@ class App extends Component {
   };
   setTarget = villager => {
     Meteor.call("player.setTarget", villager);
+    Meteor.call("game.updateFeedback")
   };
   setSaved = villager => {
     Meteor.call("player.setSaved", villager)
+    Meteor.call("game.updateFeedback")
+
   };
   investigate = villager => {
     Meteor.call("player.investigate", villager)
+    Meteor.call("game.updateFeedback")
+
   }
 
   handleSelect = button => {
@@ -67,7 +72,7 @@ class App extends Component {
       gamePhase,
       currentUser
     } = this.props;
-    gamePhase.length > 4 && console.log(this.props)
+    // gamePhase.length > 4 && console.log(this.props)
 
     return (
       <div>
@@ -106,7 +111,6 @@ class App extends Component {
             { gamePhase.length > 4 && !gamePhase[2].activePhase ? (
               ""
             ) : (
-<<<<<<< HEAD
               <Buttons
                 township={township}
                 currentUser={currentUser}
@@ -114,9 +118,6 @@ class App extends Component {
                 setSaved={this.setSaved}
                 investigate={this.investigate}
               />
-=======
-              <Buttons township={township} currentUser={currentUser} handleSelect={button => this.handleSelect(button)}/>
->>>>>>> d90fac1f5b75289a43ac8211c6895f0dac7e9960
             )}
           </div>
         )}

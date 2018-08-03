@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const ChatInput = ({ inputRef, handleChatSubmit, isDisabled}) => {
-  console.log(isDisabled)
+  // console.log(isDisabled)
   return (
     <div>
       <form onSubmit = {(e)=> handleChatSubmit(e)}>

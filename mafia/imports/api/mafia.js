@@ -81,7 +81,17 @@ Meteor.methods({
   },
   "player.investigate"(villager) {
     const inv = Mafia.find({ _id: villager }, {_id: 0, role: 1}).fetch()
-    console.log(inv)
+    // console.log(inv)
+  },
+  "game.updateFeedback"(){
+      let phase = GamePhase.find({phase:3}).fetch()
+      console.log(phase)
+      let feedback = parseInt(phase[0].feedback)
+
+      console.log(feedback, 'initial')
+      feedback++
+      console.log(feedback, 'added one')
+      GamePhase.update({phase: 3}, {$set:{feedback: feedback}})
   }
 });
 
