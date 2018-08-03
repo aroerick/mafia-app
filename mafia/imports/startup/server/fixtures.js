@@ -6,14 +6,9 @@ import { GamePhase } from '../../api/mafia'
 Meteor.startup(() => {
   if (Mafia.find().count() === 0) {
     Mafia.insert({
-      name: 'Testing Tom',
-      role: 'detective',
-      alive: true
-    })
-    Mafia.insert({
       name: 'Testing Tina',
       role: 'civilian',
-      alive: true
+      alive: false
     })
     Mafia.insert({
       name: 'Testing Timothy',
@@ -51,7 +46,8 @@ Meteor.startup(() => {
     GamePhase.insert({
       phase: 3,
       title: 'Night falls',
-      activePhase: false
+      activePhase: false,
+      feedback: 0
     })
     GamePhase.insert({
       phase: 4,
