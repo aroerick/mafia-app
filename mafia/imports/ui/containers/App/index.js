@@ -46,6 +46,10 @@ class App extends Component {
     }
   };
 
+  setTarget = villager => {
+    Meteor.call("player.setTarget", villager);
+  };
+
   render() {
     const {
       township,
@@ -76,19 +80,27 @@ class App extends Component {
         ) : (
           <div>
             <div>Welcome to the game</div>
-            <h2> Hello {this.props.currentUser[0].name}, you have been assigned the role of: {this.props.currentUser[0].role} </h2>
+            <h2>
+              {" "}
+              Hello {this.props.currentUser[0].name}, you have been assigned the
+              role of: {this.props.currentUser[0].role}{" "}
+            </h2>
             <PlayerList township={township} />
             <hr />////CHAT AREA////<hr />
             <Chatbox messages={messages} />
             <ChatInput
               inputRef={this.inputRef}
               handleChatSubmit={this.handleChatSubmit}
-              isDisabled={currentUser[0].role === 'mafia' ? false : true} 
+              isDisabled={currentUser[0].role === "mafia" ? false : true}
             />
             {!gamePhase[2].activePhase ? (
               ""
             ) : (
-              <Buttons township={township} currentUser={currentUser} />
+              <Buttons
+                township={township}
+                currentUser={currentUser}
+                setTarget={this.setTarget}
+              />
             )}
           </div>
         )}
