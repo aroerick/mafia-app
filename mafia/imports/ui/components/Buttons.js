@@ -3,29 +3,37 @@ import PropTypes from "prop-types";
 
 const Buttons = ({ township, currentUser }) => {
   message = "";
-  buttons = null;
+  actions = null;
   switch (currentUser[0].role) {
     case "mafia":
-      message = "Choose a target"
-      buttons = township
+      message = "Choose a target";
+      actions = township
+        .filter(villager => villager.alive)
         .map(villager => <button name={villager.name}>{villager.name}</button>);
 
       break;
     case "doctor":
       message = "Save someone!";
-      buttons = township
+      actions = township
+        .filter(villager => villager.alive)
         .map(villager => <button name={villager.name}>{villager.name}</button>);
       break;
     case "detective":
       message = <span>Probe. Deep.</span>;
-      buttons = township
+      actions = township
+        .filter(villager => villager.alive)
         .filter(villager => currentUser[0]._id !== villager._id)
         .map(villager => <button name={villager.name}>{villager.name}</button>);
       break;
     default:
       message = "Lullaby and Goodnight";
-	}
-  return <div><span>{message}</span> {buttons}</div>;
+  }
+  return (
+    <section>
+			<h3>{message}</h3> 
+			<div>{actions}</div>
+    </section>
+  );
 };
 
 Buttons.propTypes = {

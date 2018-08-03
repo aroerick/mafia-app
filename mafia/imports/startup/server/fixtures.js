@@ -8,7 +8,7 @@ Meteor.startup(() => {
     Mafia.insert({
       name: 'Testing Tina',
       role: 'civilian',
-      alive: true
+      alive: false
     })
     Mafia.insert({
       name: 'Testing Timothy',

@@ -62,6 +62,7 @@ class App extends Component {
             this.props.township.length
           }/6{" "}
         </h1>
+        <h2> You have been assigned the role of: </h2>
         {Mafia.find({ player: currentUserId }).count() === 0 ? (
           <input
             type="text"
