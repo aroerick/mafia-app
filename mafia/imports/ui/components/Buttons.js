@@ -9,20 +9,20 @@ const Buttons = ({ township, currentUser, setTarget, setSaved, investigate }) =>
       message = "Choose a target";
       actions = township
         .filter(villager => villager.alive)
-        .map(villager => <button name={villager.name} onClick={() => setTarget(villager._id)}>{villager.name}</button>);
+        .map(villager => <button name={villager.name} onClick={() => setTarget(villager)}>{villager.name}</button>);
       break;
     case "doctor":
       message = "Save someone!";
       actions = township
         .filter(villager => villager.alive)
-        .map(villager => <button name={villager.name} onClick={() => setSaved(villager._id)}>{villager.name}</button>);
+        .map(villager => <button name={villager.name} onClick={() => setSaved(villager)}>{villager.name}</button>);
       break;
     case "detective":
       message = <span>Probe. Deep.</span>;
       actions = township
         .filter(villager => villager.alive)
         .filter(villager => currentUser[0]._id !== villager._id)
-        .map(villager => <button name={villager.name} onClick={() => investigate(villager._id)}>{villager.name}</button>);
+        .map(villager => <button name={villager.name} onClick={() => investigate(villager)}>{villager.name}</button>);
       break;
     default:
       message = "Lullaby and Goodnight";
