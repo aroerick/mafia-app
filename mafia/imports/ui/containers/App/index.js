@@ -55,6 +55,10 @@ class App extends Component {
     Meteor.call("player.investigate", villager)
   }
 
+  handleSelect = button => {
+      console.log(button)
+  }
+
   render() {
     const {
       township,
@@ -63,13 +67,14 @@ class App extends Component {
       gamePhase,
       currentUser
     } = this.props;
+    gamePhase.length > 4 && console.log(this.props)
+
     return (
       <div>
         <h1>
-          {" "}
           Join the Township. Current population: {
             this.props.township.length
-          }/6{" "}
+          }/6
         </h1>
         {Mafia.find({ player: currentUserId }).count() === 0 ? (
           <input
@@ -98,9 +103,10 @@ class App extends Component {
               handleChatSubmit={this.handleChatSubmit}
               isDisabled={currentUser[0].role === "mafia" ? false : true}
             />
-            {!gamePhase[2].activePhase ? (
+            { gamePhase.length > 4 && !gamePhase[2].activePhase ? (
               ""
             ) : (
+<<<<<<< HEAD
               <Buttons
                 township={township}
                 currentUser={currentUser}
@@ -108,6 +114,9 @@ class App extends Component {
                 setSaved={this.setSaved}
                 investigate={this.investigate}
               />
+=======
+              <Buttons township={township} currentUser={currentUser} handleSelect={button => this.handleSelect(button)}/>
+>>>>>>> d90fac1f5b75289a43ac8211c6895f0dac7e9960
             )}
           </div>
         )}
