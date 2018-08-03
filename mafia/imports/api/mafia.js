@@ -64,7 +64,10 @@ Meteor.methods({
   },
   "messages.handleChatSubmit"(message) {
     Messages.insert(message);
-  }
+  },
+  // "player.setTarget" (player) {
+  //   Mafia.update({})
+  // }
 });
 
 if (Meteor.isServer) {
