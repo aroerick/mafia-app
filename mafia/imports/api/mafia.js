@@ -78,6 +78,13 @@ Meteor.methods({
         saved: true
       }
     });
+  },
+  "player.hasActed"(currentUser) {
+    Mafia.update(currentUser[0], {
+      $set: {
+        hasActed: true
+      }
+    });
   }
 });
 
