@@ -71,6 +71,13 @@ Meteor.methods({
         targeted: true
       }
     });
+  },
+  "player.setSaved"(villager) {
+    Mafia.update(villager, {
+      $set: {
+        saved: true
+      }
+    });
   }
 });
 

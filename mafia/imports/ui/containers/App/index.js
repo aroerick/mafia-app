@@ -45,10 +45,12 @@ class App extends Component {
       Meteor.call("game.nextPhase");
     }
   };
-
   setTarget = villager => {
     Meteor.call("player.setTarget", villager);
   };
+  setSaved = villager => {
+    Meteor.call("player.setSaved", villager)
+  }
 
   render() {
     const {
@@ -100,6 +102,7 @@ class App extends Component {
                 township={township}
                 currentUser={currentUser}
                 setTarget={this.setTarget}
+                setSaved={this.setSaved}
               />
             )}
           </div>

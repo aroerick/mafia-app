@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const Buttons = ({ township, currentUser, setTarget }) => {
+const Buttons = ({ township, currentUser, setTarget, setSaved }) => {
   message = "";
   actions = null;
   switch (currentUser[0].role) {
@@ -15,7 +15,7 @@ const Buttons = ({ township, currentUser, setTarget }) => {
       message = "Save someone!";
       actions = township
         .filter(villager => villager.alive)
-        .map(villager => <button name={villager.name} onClick={save}>{villager.name}</button>);
+        .map(villager => <button name={villager.name} onClick={() => setSaved(villager._id)}>{villager.name}</button>);
       break;
     case "detective":
       message = <span>Probe. Deep.</span>;
