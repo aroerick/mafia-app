@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from 'prop-types';
 
 const Chatbox = ({ messages }) => (
+
   <div style={{maxHeight: '400px', overflowY:'scroll'}}>
     <ul>{messages.map(message => 
     <li><p style={{fontWeight: 600}}>{message.sender} to {message.recipient}:</p>

@@ -27,7 +27,8 @@ class App extends Component {
       Meteor.call("messages.handleChatSubmit", {
         text: inputRef.value,
         sender: currentUser.name,
-        recipient: "Everyone"
+        recipient: "Everyone",
+        role: currentUser.role
       });
       this.inputRef.current.value = "";
     }
@@ -46,6 +47,16 @@ startGame = () => {
         Meteor.call("game.nextPhase")
     }
     
+}
+
+filterMessages = (role) => {
+  if ( role != "mafia") {
+    let filteredMessages = this.props.messages.filter(message => (message.role != "mafia" && message.recipient != "Mafia" ))
+    return filteredMessages
+  } else {
+    let unfilteredMessages = this.props.messages
+    return unfilteredMessages
+  }
 }
 
   render() {
@@ -70,9 +81,11 @@ startGame = () => {
         <div>Welcome to the game</div>
         <PlayerList township={township} />
         <hr />////CHAT AREA////<hr />
-        <Chatbox messages={messages}/>
-           {/* {!gamePhase[2].activePhase ? '' : <Buttons township={township} currentUser={currentUser}/>
-        } */}
+        <p>this is the current User</p>
+        <p>{this.props.currentUser[0].role}</p>
+        <Chatbox messages={this.filterMessages(this.props.currentUser[0].role)}/>
+           {!gamePhase[2].activePhase ? '' : <Buttons township={township} currentUser={currentUser}/>
+        }
         <ChatInput
           inputRef={this.inputRef}
           handleChatSubmit={this.handleChatSubmit}

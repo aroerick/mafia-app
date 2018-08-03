@@ -6,7 +6,7 @@ const Buttons = ({ township, currentUser }) => (
       <hr/>
       <span>PICK SOMEBODY</span>
       {township.filter(villager => currentUser !== villager.player).map(villager => 
-    <input type="button">{villager.name}</input>
+    <button type="button">{villager.name}</button>
     )}
     <hr/>
   </div>
