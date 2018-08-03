@@ -54,14 +54,14 @@ class App extends Component {
       gamePhase,
       currentUser
     } = this.props;
+    gamePhase.length > 4 && console.log(this.props)
 
     return (
       <div>
         <h1>
-          {" "}
           Join the Township. Current population: {
             this.props.township.length
-          }/6{" "}
+          }/6
         </h1>
         {Mafia.find({ player: currentUserId }).count() === 0 ? (
           <input
@@ -85,7 +85,7 @@ class App extends Component {
               handleChatSubmit={this.handleChatSubmit}
               isDisabled={currentUser[0].role === 'mafia' ? false : true} 
             />
-            {!gamePhase[2].activePhase ? (
+            { gamePhase.length > 4 && !gamePhase[2].activePhase ? (
               ""
             ) : (
               <Buttons township={township} currentUser={currentUser} />
