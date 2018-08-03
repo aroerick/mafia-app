@@ -50,6 +50,9 @@ class App extends Component {
   };
   setSaved = villager => {
     Meteor.call("player.setSaved", villager)
+  };
+  investigate = villager => {
+    Meteor.call("player.investigate", villager)
   }
 
   render() {
@@ -103,6 +106,7 @@ class App extends Component {
                 currentUser={currentUser}
                 setTarget={this.setTarget}
                 setSaved={this.setSaved}
+                investigate={this.investigate}
               />
             )}
           </div>

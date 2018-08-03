@@ -46,7 +46,8 @@ Meteor.startup(() => {
     GamePhase.insert({
       phase: 3,
       title: 'Night falls',
-      activePhase: false
+      activePhase: false,
+      feedback: 0
     })
     GamePhase.insert({
       phase: 4,
