@@ -46,6 +46,10 @@ class App extends Component {
     }
   };
 
+  handleSelect = button => {
+      console.log(button)
+  }
+
   render() {
     const {
       township,
@@ -89,7 +93,7 @@ class App extends Component {
             { gamePhase.length > 4 && !gamePhase[2].activePhase ? (
               ""
             ) : (
-              <Buttons township={township} currentUser={currentUser} />
+              <Buttons township={township} currentUser={currentUser} handleSelect={button => this.handleSelect(button)}/>
             )}
           </div>
         )}

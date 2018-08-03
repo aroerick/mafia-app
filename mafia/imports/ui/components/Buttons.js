@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const Buttons = ({ township, currentUser }) => {
+const Buttons = ({ township, currentUser, handleSelect }) => {
   message = "";
   actions = null;
   switch (currentUser[0].role) {
@@ -9,21 +9,21 @@ const Buttons = ({ township, currentUser }) => {
       message = "Choose a target";
       actions = township
         .filter(villager => villager.alive)
-        .map(villager => <button name={villager.name}>{villager.name}</button>);
+        .map(villager => <button name={villager.name} onClick={()=>handleSelect(villager)}>{villager.name}</button>);
 
       break;
     case "doctor":
       message = "Save someone!";
       actions = township
         .filter(villager => villager.alive)
-        .map(villager => <button name={villager.name}>{villager.name}</button>);
+        .map(villager => <button name={villager.name} onClick={()=>handleSelect(villager)}>{villager.name}</button>);
       break;
     case "detective":
       message = <span>Probe. Deep.</span>;
       actions = township
         .filter(villager => villager.alive)
         .filter(villager => currentUser[0]._id !== villager._id)
-        .map(villager => <button name={villager.name}>{villager.name}</button>);
+        .map(villager => <button name={villager.name} onClick={()=>handleSelect(villager)}>{villager.name}</button>);
       break;
     default:
       message = "Lullaby and Goodnight";
