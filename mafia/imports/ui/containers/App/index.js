@@ -71,8 +71,8 @@ startGame = () => {
         <PlayerList township={township} />
         <hr />////CHAT AREA////<hr />
         <Chatbox messages={messages}/>
-           {/* {!gamePhase[2].activePhase ? '' : <Buttons township={township} currentUser={currentUser}/>
-        } */}
+           {!gamePhase[2].activePhase ? '' : <Buttons township={township} currentUser={currentUser}/>
+        }
         <ChatInput
           inputRef={this.inputRef}
           handleChatSubmit={this.handleChatSubmit}

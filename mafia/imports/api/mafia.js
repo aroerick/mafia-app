@@ -53,7 +53,7 @@ Meteor.methods({
             })
         }
            , 
-            50000)
+            3000)
      },
      "messages.handleChatSubmit"(message){
         Messages.insert(message)  
