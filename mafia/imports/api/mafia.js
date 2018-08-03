@@ -92,6 +92,7 @@ Meteor.methods({
       feedback++
       console.log(feedback, 'added one')
       GamePhase.update({phase: 3}, {$set:{feedback: feedback}})
+  },
   "player.hasActed"(currentUser) {
     Mafia.update(currentUser[0], {
       $set: {

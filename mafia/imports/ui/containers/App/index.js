@@ -129,7 +129,7 @@ class App extends Component {
               handleChatSubmit={this.handleChatSubmit}
               isDisabled={currentUser[0].role === "mafia" ? false : true}
             />
-            {gamePhase.length >= 4 && !gamePhase[2].activePhase ? (
+            {gamePhase.length >= 4 && !gamePhase[2].activePhase || this.props.currentUser[0].hasActed ? (
               ""
             ) : (
               <Buttons
