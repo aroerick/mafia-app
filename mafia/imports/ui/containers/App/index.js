@@ -19,22 +19,12 @@ class App extends Component {
   handleChatSubmit = (e) => {
     e.preventDefault();
     let inputRef = this.inputRef.current;
-<<<<<<< HEAD
     let currentUser = this.props.currentUser[0]
 
     if (inputRef.value) {
       Meteor.call("messages.handleChatSubmit", {
         text: inputRef.value,
         sender: currentUser.name,
-=======
-    let currentPlayer = this.props.township.filter(user => user.player === this.props.currentUserId)
-    console.log(theBoss, 'theboss')
-    console.log(this.props.township)
-    if (inputRef.value) {
-      Meteor.call("messages.handleChatSubmit", {
-        text: inputRef.value,
-        sender: currentPlayer[0].name,
->>>>>>> 8b61838cb5431933afb0a2b1b0d586366834bc73
         recipient: "everyone"
       });
       this.inputRef.current.value = "";
@@ -49,16 +39,8 @@ class App extends Component {
   };
 
   render() {
-<<<<<<< HEAD
-    const { township, messages, currentUserId, currentUser } = this.props;
-    // const activePlayer = township[0]
-    // console.log(activePlayer, 'active player')
-    // console.log(currentUser.name)
-=======
     const { township, messages, currentUserId } = this.props;
-    const currentUser = Mafia.find({ player: currentUserId})
-console.log(currentUser)
->>>>>>> 8b61838cb5431933afb0a2b1b0d586366834bc73
+
     return (
 
       <div>
