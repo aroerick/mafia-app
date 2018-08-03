@@ -55,10 +55,8 @@ class App extends Component {
       gamePhase,
       currentUser
     } = this.props;
-
     return (
       <div>
-        {/* <Buttons township={township} currentUser={currentUser} /> */}
         <h1>
           {" "}
           Join the Township. Current population: {
