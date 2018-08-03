@@ -51,18 +51,20 @@ class App extends Component {
       sender: "Narrator",
       recipient: "Mafia",
       text: `You've targeted ${villager.name} for execution`
-    })
+    });
     Meteor.call("player.hasActed", currentUser);
+    Meteor.call("game.updateFeedback");
   };
   setSaved = (villager, currentUser) => {
-    console.log(currentUser)
+    console.log(currentUser);
     Meteor.call("player.setSaved", villager);
     Meteor.call("messages.handleChatSubmit", {
       sender: "Narrator",
       recipient: "Doctor",
       text: `You've made sure ${villager.name} will make it through the night`
-    })
+    });
     Meteor.call("player.hasActed", currentUser);
+    Meteor.call("game.updateFeedback");
   };
   investigate = (villager, currentUser) => {
     const inv = Mafia.find({ _id: villager._id }).fetch();
@@ -81,6 +83,7 @@ class App extends Component {
           });
     }
     Meteor.call("player.hasActed", currentUser);
+    Meteor.call("game.updateFeedback");
   };
 
   handleSelect = button => {
@@ -129,7 +132,8 @@ class App extends Component {
               handleChatSubmit={this.handleChatSubmit}
               isDisabled={currentUser[0].role === "mafia" ? false : true}
             />
-            {gamePhase.length >= 4 && !gamePhase[2].activePhase || this.props.currentUser[0].hasActed ? (
+            {(gamePhase.length >= 4 && !gamePhase[2].activePhase) ||
+            this.props.currentUser[0].hasActed ? (
               ""
             ) : (
               <Buttons
