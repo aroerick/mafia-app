@@ -124,22 +124,22 @@ Meteor.methods({
             $set: {
               targeted:false
             }
-          });
-          Mafia.update({targeted:true}, {
-            $set: {
-              targeted:false
-            }
-          });
+          }, {multi:true});
+          // Mafia.update({targeted:true}, {
+          //   $set: {
+          //     targeted:false
+          //   }
+          // });
           Mafia.update({saved:true}, {
             $set: {
               saved:false
             }
           });
-          Mafia.updateMany({hasActed:true}, {
+          Mafia.update({hasActed:true}, {
             $set: {
               hasActed:false
             }
-          });
+          },{multi:true});
         } 
         // Mafia picked the same villager as the doctor.  Villager lives.  Targeted and saved are reset.  
         else if (Mafia.find({targeted:true}).count() === 1){
@@ -163,11 +163,11 @@ Meteor.methods({
                 saved:false
               }
             });
-            Mafia.updateMany({hasActed:true}, {
+            Mafia.update({hasActed:true}, {
               $set: {
                 hasActed:false
               }
-            });
+            }, {multi:true});
       
 
             // Mafia and doctor visited different people.  The villager visited by the mafia has died.
@@ -193,11 +193,11 @@ Meteor.methods({
                 saved:false
               }
             });
-            Mafia.updateMany({hasActed:true}, {
+            Mafia.update({hasActed:true}, {
               $set: {
                 hasActed:false
               }
-            });
+            }, {multi:true});
 
 
           }
@@ -233,6 +233,10 @@ Meteor.methods({
     GamePhase.update({phase: 5}, {$set:{feedback: feedback}})
 
     console.log('receiving feedback in phase 5')
+
+    //NEED TO SOMEHOW FIGURE OUT HOW MANY TIMES PEOPLE HAVE BEEN VOTED FOR...? Rule? at least half of people alive should vote for u for u to be lynched
+    // RESET FEED BACK - SEND TOWN TO PHASE 2 TO START AGAIN 
+    // INSERT CHECK FOR WIN CONDITIONS
 },
 
 });
