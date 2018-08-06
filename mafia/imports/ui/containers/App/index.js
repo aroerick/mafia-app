@@ -9,7 +9,8 @@ import PlayerList from "./../../components/PlayerList";
 import Chatbox from "./../../components/Chatbox";
 import ChatInput from "./../../components/ChatInput";
 import Buttons from "./../../components/Buttons";
-import DayButtons from './../../components/DayButtons';
+import DayButtons from "./../../components/DayButtons";
+import { Input, Divider, Header, Container } from "semantic-ui-react";
 // import Actions from "../../components/Actions";
 
 class App extends Component {
@@ -89,7 +90,7 @@ class App extends Component {
   };
 
   setLynchTarget = (villager, currentUser) => {
-    if (villager === ''){
+    if (villager === "") {
       Meteor.call("player.hasActed", currentUser);
       Meteor.call("game.updateDaytimeFeedback");
     } else {
@@ -101,24 +102,24 @@ class App extends Component {
       });
       Meteor.call("player.hasActed", currentUser);
       Meteor.call("game.updateDaytimeFeedback");
-      
     }
-    
   };
 
   handleSelect = button => {
     console.log(button);
   };
 
-filterMessages = (role) => {
-  if ( role != "mafia") {
-    let filteredMessages = this.props.messages.filter(message => (message.role != "mafia" && message.recipient != "Mafia" ))
-    return filteredMessages
-  } else {
-    let unfilteredMessages = this.props.messages
-    return unfilteredMessages
-  }
-}
+  filterMessages = role => {
+    if (role != "mafia") {
+      let filteredMessages = this.props.messages.filter(
+        message => message.role != "mafia" && message.recipient != "Mafia"
+      );
+      return filteredMessages;
+    } else {
+      let unfilteredMessages = this.props.messages;
+      return unfilteredMessages;
+    }
+  };
 
   render() {
     const {
@@ -132,65 +133,70 @@ filterMessages = (role) => {
 
     return (
       <div>
-        <h1>
-          Join the Township. Current population: {this.props.township.length}/6
-        </h1>
-        {Mafia.find({ player: currentUserId }).count() === 0 ? (
-          <input
-            type="text"
-            placeholder="Name"
-            ref={this.playerName}
-            onKeyDown={event => {
-              if (event.key == "Enter") {
-                this.joinGame();
-              }
-            }}
-          />
-        ) : (
-          <div>
-            <div>Welcome to the game</div>
-            <h2>
-              {" "}
-              Hello {this.props.currentUser[0].name}, you have been assigned the
-              role of: {this.props.currentUser[0].role}{" "}
-            </h2>
-            <PlayerList township={township} />
-            <hr />////CHAT AREA////<hr />
-                    <Chatbox messages={this.filterMessages(this.props.currentUser[0].role)}/>
-            <ChatInput
-              inputRef={this.inputRef}
-              handleChatSubmit={this.handleChatSubmit}
-              isDisabled={currentUser[0].role === "mafia" ? false : true}
+        <Container>
+          <Header as="h1" block>
+            Join the Township. Current population: {this.props.township.length}/6
+          </Header>
+          {Mafia.find({ player: currentUserId }).count() === 0 ? (
+            <input
+              icon="users"
+              iconPosition="left"
+              type="text"
+              placeholder="Name"
+              ref={this.playerName}
+              onKeyDown={event => {
+                if (event.key == "Enter") {
+                  this.joinGame();
+                }
+              }}
             />
-            {(gamePhase.length >= 5 && !gamePhase[2].activePhase ||
-            this.props.currentUser[0].hasActed )
-         ? (
-              ""
-            ) : (
-              <Buttons
-                township={township}
-                currentUser={currentUser}
-                setTarget={this.setTarget}
-                setSaved={this.setSaved}
-                investigate={this.investigate}
+          ) : (
+            <div>
+              <Header as="h3">Welcome to the game</Header>
+              <Header as="h2" dividing>
+                {" "}
+                Hello {this.props.currentUser[0].name}, you have been assigned
+                the role of: {this.props.currentUser[0].role}{" "}
+              </Header>
+              <PlayerList township={township} />
+              {/* <hr />////CHAT AREA////<hr /> */}
+              <Divider horizontal>Chat Area</Divider>
+              <Chatbox
+                messages={this.filterMessages(this.props.currentUser[0].role)}
               />
-            )}
+              <ChatInput
+                inputRef={this.inputRef}
+                handleChatSubmit={this.handleChatSubmit}
+                isDisabled={currentUser[0].role === "mafia" ? false : true}
+              />
+              {(gamePhase.length >= 5 && !gamePhase[2].activePhase) ||
+              this.props.currentUser[0].hasActed ? (
+                ""
+              ) : (
+                <Buttons
+                  township={township}
+                  currentUser={currentUser}
+                  setTarget={this.setTarget}
+                  setSaved={this.setSaved}
+                  investigate={this.investigate}
+                />
+              )}
 
-             {(gamePhase.length >= 5 && gamePhase[4].activePhase ||
-           gamePhase.length >= 5 &&  gamePhase[4].activePhase && !this.props.currentUser[0].hasActed )
-         ? (
-          <DayButtons
-          township={township}
-          currentUser={currentUser}
-          setLynchTarget={this.setLynchTarget}
-        />
-           
-            ) : (
-              ""
-            )}
-
-          </div>
-        )}
+              {(gamePhase.length >= 5 && gamePhase[4].activePhase) ||
+              (gamePhase.length >= 5 &&
+                gamePhase[4].activePhase &&
+                !this.props.currentUser[0].hasActed) ? (
+                <DayButtons
+                  township={township}
+                  currentUser={currentUser}
+                  setLynchTarget={this.setLynchTarget}
+                />
+              ) : (
+                ""
+              )}
+            </div>
+          )}
+        </Container>
       </div>
     );
   }
