@@ -9,6 +9,7 @@ import PlayerList from "./../../components/PlayerList";
 import Chatbox from "./../../components/Chatbox";
 import ChatInput from "./../../components/ChatInput";
 import Buttons from "./../../components/Buttons";
+import DayButtons from './../../components/DayButtons';
 // import Actions from "../../components/Actions";
 
 class App extends Component {
@@ -87,6 +88,24 @@ class App extends Component {
     Meteor.call("game.updateFeedback");
   };
 
+  setLynchTarget = (villager, currentUser) => {
+    if (villager === ''){
+      Meteor.call("player.hasActed", currentUser);
+      Meteor.call("game.updateDaytimeFeedback");
+    } else {
+      Meteor.call("player.setLynchTarget", villager);
+      Meteor.call("messages.handleChatSubmit", {
+        sender: "Narrator",
+        recipient: currentUser[0].name,
+        text: `You've targeted ${villager.name} for lynching`
+      });
+      Meteor.call("player.hasActed", currentUser);
+      Meteor.call("game.updateDaytimeFeedback");
+      
+    }
+    
+  };
+
   handleSelect = button => {
     console.log(button);
   };
@@ -143,8 +162,9 @@ filterMessages = (role) => {
               handleChatSubmit={this.handleChatSubmit}
               isDisabled={currentUser[0].role === "mafia" ? false : true}
             />
-            {(gamePhase.length >= 4 && !gamePhase[2].activePhase) ||
-            this.props.currentUser[0].hasActed ? (
+            {(gamePhase.length >= 5 && !gamePhase[2].activePhase ||
+            this.props.currentUser[0].hasActed )
+         ? (
               ""
             ) : (
               <Buttons
@@ -155,6 +175,20 @@ filterMessages = (role) => {
                 investigate={this.investigate}
               />
             )}
+
+             {(gamePhase.length >= 5 && gamePhase[4].activePhase ||
+           gamePhase.length >= 5 &&  gamePhase[4].activePhase && !this.props.currentUser[0].hasActed )
+         ? (
+          <DayButtons
+          township={township}
+          currentUser={currentUser}
+          setLynchTarget={this.setLynchTarget}
+        />
+           
+            ) : (
+              ""
+            )}
+
           </div>
         )}
       </div>

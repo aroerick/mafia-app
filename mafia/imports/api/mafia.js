@@ -87,6 +87,13 @@ Meteor.methods({
     const inv = Mafia.find({ _id: villager }, {_id: 0, role: 1}).fetch()
     // console.log(inv)
   },
+  "player.setLynchTarget"(villager) {
+    Mafia.update(villager, {
+      $set: {
+        lynchTargeted: true
+      }
+    });
+  },
   "game.updateFeedback"(){
       let phase = GamePhase.find({phase:3}).fetch()
       let feedback = parseInt(phase[0].feedback)
@@ -104,6 +111,7 @@ Meteor.methods({
             "The hustle and bustle of the night has died down.  The dawn is nigh.  On the morning of the new day, a meeting is to be held with the township."
         })
 
+        Meteor.setTimeout(function() {
         // Mafia split their vote - nobody dies.  Targeted and saved are reset.
         if (Mafia.find({targeted:true}).count()>1){
           Messages.insert({
@@ -127,6 +135,11 @@ Meteor.methods({
               saved:false
             }
           });
+          Mafia.updateMany({hasActed:true}, {
+            $set: {
+              hasActed:false
+            }
+          });
         } 
         // Mafia picked the same villager as the doctor.  Villager lives.  Targeted and saved are reset.  
         else if (Mafia.find({targeted:true}).count() === 1){
@@ -138,7 +151,7 @@ Meteor.methods({
             Messages.insert({
               sender: "Narrator",
               recipient: "Everyone",
-              text: `${saved} hosted a party at their place last night... the doctor was there... the mafia was there... nobody was up to any funny business`
+              text: `${saved[0].name} hosted a party at their place last night... the doctor was there... the mafia was there... nobody was up to any funny business`
             }) 
             Mafia.update({targeted:true}, {
               $set: {
@@ -148,6 +161,11 @@ Meteor.methods({
             Mafia.update({saved:true}, {
               $set: {
                 saved:false
+              }
+            });
+            Mafia.updateMany({hasActed:true}, {
+              $set: {
+                hasActed:false
               }
             });
       
@@ -175,12 +193,28 @@ Meteor.methods({
                 saved:false
               }
             });
+            Mafia.updateMany({hasActed:true}, {
+              $set: {
+                hasActed:false
+              }
+            });
+
 
           }
 
         }
 
         GamePhase.update({phase: 3}, {$set:{feedback: 0}})
+        GamePhase.update({ phase: 4 }, { $set: { activePhase: false } });
+        GamePhase.update({ phase: 5 }, { $set: { activePhase: true } });
+        Messages.insert({
+          sender: "Narrator",
+          recipient: "Everyone",
+          text:`The town still feels strange.  Somebody is here who's looking to start trouble.  Perhaps we should get rid of them?  What say the town people?`
+
+            // `${villager[0].name}'s home appears to have been wrangled in the night.  No trace of them to be found!`
+        }) 
+      }, 10000);
       }
 
   },
@@ -190,7 +224,17 @@ Meteor.methods({
         hasActed: true
       }
     });
-  }
+  },
+
+  "game.updateDaytimeFeedback"(){
+    let phase = GamePhase.find({phase:5}).fetch()
+    let feedback = parseInt(phase[0].feedback)
+    feedback++
+    GamePhase.update({phase: 5}, {$set:{feedback: feedback}})
+
+    console.log('receiving feedback in phase 5')
+},
+
 });
 
 if (Meteor.isServer) {

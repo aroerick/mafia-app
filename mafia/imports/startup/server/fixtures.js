@@ -54,5 +54,10 @@ Meteor.startup(() => {
       title: 'The new day dawns',
       activePhase: false
     })
+    GamePhase.insert({
+      phase: 5,
+      title: 'Town Lynching',
+      activePhase: false
+    })
   }
 });
