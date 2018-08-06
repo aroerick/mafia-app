@@ -15,11 +15,11 @@ Meteor.startup(() => {
       role: 'civilian',
       alive: true
     })
-    Mafia.insert({
-      name: 'Testing Tabitha',
-      role: 'mafia',
-      alive: true
-    })
+    // Mafia.insert({
+    //   name: 'Testing Tabitha',
+    //   role: 'mafia',
+    //   alive: true
+    // })
   }
 
   if (Messages.find().count() === 0) {

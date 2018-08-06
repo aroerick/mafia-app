@@ -8,10 +8,14 @@ const roleArr = [
   "mafia",
   "doctor",
   "detective",
+  "mafia",
   "ciivlian",
   "civilian",
-  "mafia"
+  
 ];
+
+const targetedVillager = Mafia.find({targeted: true})
+const savedVillager = Mafia.find({saved:true})
 
 Meteor.methods({
   "player.createNew"(name) {
@@ -85,13 +89,100 @@ Meteor.methods({
   },
   "game.updateFeedback"(){
       let phase = GamePhase.find({phase:3}).fetch()
-      console.log(phase)
       let feedback = parseInt(phase[0].feedback)
-
-      console.log(feedback, 'initial')
       feedback++
-      console.log(feedback, 'added one')
       GamePhase.update({phase: 3}, {$set:{feedback: feedback}})
+
+      if (Mafia.find({ $and: [ { alive: true }, { role: { $not: { $eq: "civilian" } } } ] }).count() === feedback){
+        GamePhase.update({ phase: 3 }, { $set: { activePhase: false } });
+        GamePhase.update({ phase: 4 }, { $set: { activePhase: true } });
+
+        Messages.insert({
+          sender: "Narrator",
+          recipient: "Everyone",
+          text:
+            "The hustle and bustle of the night has died down.  The dawn is nigh.  On the morning of the new day, a meeting is to be held with the township."
+        })
+
+        // Mafia split their vote - nobody dies.  Targeted and saved are reset.
+        if (Mafia.find({targeted:true}).count()>1){
+          Messages.insert({
+            sender: "Narrator",
+            recipient: "Everyone",
+            text:
+              "Lucky for this township, it appears the mafia don't have their act together.  Nobody has died tonight."
+          })
+          Mafia.update({targeted:true}, {
+            $set: {
+              targeted:false
+            }
+          });
+          Mafia.update({targeted:true}, {
+            $set: {
+              targeted:false
+            }
+          });
+          Mafia.update({saved:true}, {
+            $set: {
+              saved:false
+            }
+          });
+        } 
+        // Mafia picked the same villager as the doctor.  Villager lives.  Targeted and saved are reset.  
+        else if (Mafia.find({targeted:true}).count() === 1){
+          let targeted = Mafia.find({targeted:true}).fetch()
+          let saved = Mafia.find({saved:true}).fetch()
+          if (saved[0].name === targeted[0].name){
+            let villager = Mafia.find({targeted:true}).fetch()
+
+            Messages.insert({
+              sender: "Narrator",
+              recipient: "Everyone",
+              text: `${saved} hosted a party at their place last night... the doctor was there... the mafia was there... nobody was up to any funny business`
+            }) 
+            Mafia.update({targeted:true}, {
+              $set: {
+                targeted:false
+              }
+            });
+            Mafia.update({saved:true}, {
+              $set: {
+                saved:false
+              }
+            });
+      
+
+            // Mafia and doctor visited different people.  The villager visited by the mafia has died.
+          } else if (Mafia.find({targeted:true}).fetch()!== Mafia.find({saved:true}).fetch()){
+            let targeted = Mafia.find({targeted:true}).fetch()
+
+            Messages.insert({
+              sender: "Narrator",
+              recipient: "Everyone",
+              text:`We noticed ${targeted[0].name} didnt show up to the morning meeting.  There's no trace of them to be found and their home is a wrangled disaster.  What poor misfortune befell our poor ${targeted[0].name}??`
+
+                // `${villager[0].name}'s home appears to have been wrangled in the night.  No trace of them to be found!`
+            }) 
+
+            Mafia.update({targeted:true}, {
+              $set: {
+                alive: false
+              }
+            });
+
+            Mafia.update({saved:true}, {
+              $set: {
+                saved:false
+              }
+            });
+
+          }
+
+        }
+
+        GamePhase.update({phase: 3}, {$set:{feedback: 0}})
+      }
+
   },
   "player.hasActed"(currentUser) {
     Mafia.update(currentUser[0], {
