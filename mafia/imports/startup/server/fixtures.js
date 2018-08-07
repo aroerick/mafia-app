@@ -8,18 +8,20 @@ Meteor.startup(() => {
     Mafia.insert({
       name: 'Testing Tina',
       role: 'civilian',
-      alive: false
+      alive: false,
+      votesForLynch: 0
     })
     Mafia.insert({
       name: 'Testing Timothy',
       role: 'civilian',
-      alive: true
+      alive: true,
+      votesForLynch: 0
     })
-    Mafia.insert({
-      name: 'Testing Tabitha',
-      role: 'mafia',
-      alive: true
-    })
+    // Mafia.insert({
+    //   name: 'Testing Tabitha',
+    //   role: 'mafia',
+    //   alive: true
+    // })
   }
 
   if (Messages.find().count() === 0) {
@@ -53,6 +55,12 @@ Meteor.startup(() => {
       phase: 4,
       title: 'The new day dawns',
       activePhase: false
+    })
+    GamePhase.insert({
+      phase: 5,
+      title: 'Town Lynching',
+      activePhase: false,
+      feedback: 0
     })
   }
 });

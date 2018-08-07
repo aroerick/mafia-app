@@ -9,6 +9,8 @@ import PlayerList from "./../../components/PlayerList";
 import Chatbox from "./../../components/Chatbox";
 import ChatInput from "./../../components/ChatInput";
 import Buttons from "./../../components/Buttons";
+import DayButtons from "./../../components/DayButtons";
+import { Input, Divider, Header, Container } from "semantic-ui-react";
 // import Actions from "../../components/Actions";
 
 class App extends Component {
@@ -26,7 +28,8 @@ class App extends Component {
       Meteor.call("messages.handleChatSubmit", {
         text: inputRef.value,
         sender: currentUser.name,
-        recipient: "Everyone"
+        recipient: "Everyone",
+        role: currentUser.role
       });
       this.inputRef.current.value = "";
     }
@@ -51,18 +54,20 @@ class App extends Component {
       sender: "Narrator",
       recipient: "Mafia",
       text: `You've targeted ${villager.name} for execution`
-    })
+    });
     Meteor.call("player.hasActed", currentUser);
+    Meteor.call("game.updateFeedback");
   };
   setSaved = (villager, currentUser) => {
-    console.log(currentUser)
+    console.log(currentUser);
     Meteor.call("player.setSaved", villager);
     Meteor.call("messages.handleChatSubmit", {
       sender: "Narrator",
       recipient: "Doctor",
       text: `You've made sure ${villager.name} will make it through the night`
-    })
+    });
     Meteor.call("player.hasActed", currentUser);
+    Meteor.call("game.updateFeedback");
   };
   investigate = (villager, currentUser) => {
     const inv = Mafia.find({ _id: villager._id }).fetch();
@@ -81,10 +86,39 @@ class App extends Component {
           });
     }
     Meteor.call("player.hasActed", currentUser);
+    Meteor.call("game.updateFeedback");
+  };
+
+  setLynchTarget = (villager, currentUser) => {
+    if (villager === "") {
+      Meteor.call("player.hasActed", currentUser);
+      Meteor.call("game.updateDaytimeFeedback");
+    } else {
+      Meteor.call("player.setLynchTarget", villager);
+      Meteor.call("messages.handleChatSubmit", {
+        sender: "Narrator",
+        recipient: currentUser[0].name,
+        text: `You've targeted ${villager.name} for lynching`
+      });
+      Meteor.call("player.hasActed", currentUser);
+      Meteor.call("game.updateDaytimeFeedback");
+    }
   };
 
   handleSelect = button => {
     console.log(button);
+  };
+
+  filterMessages = role => {
+    if (role != "mafia") {
+      let filteredMessages = this.props.messages.filter(
+        message => message.role != "mafia" && message.recipient != "Mafia"
+      );
+      return filteredMessages;
+    } else {
+      let unfilteredMessages = this.props.messages;
+      return unfilteredMessages;
+    }
   };
 
   render() {
@@ -98,51 +132,71 @@ class App extends Component {
     // gamePhase.length > 4 && console.log(this.props)
 
     return (
-      <div>
-        <h1>
-          Join the Township. Current population: {this.props.township.length}/6
-        </h1>
-        {Mafia.find({ player: currentUserId }).count() === 0 ? (
-          <input
-            type="text"
-            placeholder="Name"
-            ref={this.playerName}
-            onKeyDown={event => {
-              if (event.key == "Enter") {
-                this.joinGame();
-              }
-            }}
-          />
-        ) : (
-          <div>
-            <div>Welcome to the game</div>
-            <h2>
-              {" "}
-              Hello {this.props.currentUser[0].name}, you have been assigned the
-              role of: {this.props.currentUser[0].role}{" "}
-            </h2>
-            <PlayerList township={township} />
-            <hr />////CHAT AREA////<hr />
-            <Chatbox messages={messages} />
-            <ChatInput
-              inputRef={this.inputRef}
-              handleChatSubmit={this.handleChatSubmit}
-              isDisabled={currentUser[0].role === "mafia" ? false : true}
+     
+        <Container>
+          <Header as="h1" block>
+            Join the Township. Current population: {this.props.township.length}/6
+          </Header>
+          {Mafia.find({ player: currentUserId }).count() === 0 ? (
+            <input
+              icon="users"
+              iconPosition="left"
+              type="text"
+              placeholder="Name"
+              ref={this.playerName}
+              onKeyDown={event => {
+                if (event.key == "Enter") {
+                  this.joinGame();
+                }
+              }}
             />
-            {gamePhase.length >= 4 && !gamePhase[2].activePhase ? (
-              ""
-            ) : (
-              <Buttons
-                township={township}
-                currentUser={currentUser}
-                setTarget={this.setTarget}
-                setSaved={this.setSaved}
-                investigate={this.investigate}
+          ) : (
+            <div>
+              <Header as="h3">Welcome to the game</Header>
+              <Header as="h2" dividing>
+                {" "}
+                Hello {this.props.currentUser[0].name}, you have been assigned
+                the role of: {this.props.currentUser[0].role}{" "}
+              </Header>
+              <PlayerList township={township} />
+              {/* <hr />////CHAT AREA////<hr /> */}
+              <Divider horizontal>Chat Area</Divider>
+              <Chatbox
+                messages={this.filterMessages(this.props.currentUser[0].role)}
               />
-            )}
-          </div>
-        )}
-      </div>
+              <ChatInput
+                inputRef={this.inputRef}
+                handleChatSubmit={this.handleChatSubmit}
+                isDisabled={currentUser[0].role === "mafia" ? false : true}
+              />
+              {(gamePhase.length >= 5 && !gamePhase[2].activePhase) ||
+              this.props.currentUser[0].hasActed|| !this.props.currentUser[0].alive ? (
+                ""
+              ) : (
+                <Buttons
+                  township={township}
+                  currentUser={currentUser}
+                  setTarget={this.setTarget}
+                  setSaved={this.setSaved}
+                  investigate={this.investigate}
+                />
+              )}
+
+                {(
+           gamePhase.length >= 5 &&  gamePhase[4].activePhase && !this.props.currentUser[0].hasActed && this.props.currentUser[0].alive )
+         ? (
+                <DayButtons
+                  township={township}
+                  currentUser={currentUser}
+                  setLynchTarget={this.setLynchTarget}
+                />
+              ) : (
+                ""
+              )}
+            </div>
+          )}
+        </Container>
+
     );
   }
 }
