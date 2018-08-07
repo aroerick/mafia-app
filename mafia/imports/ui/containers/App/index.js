@@ -50,7 +50,7 @@ class App extends Component {
   };
   setTarget = (villager, currentUser) => {
     Meteor.call("player.setTarget", villager);
-    Meteor.call("messa ges.handleChatSubmit", {
+    Meteor.call("messages.handleChatSubmit", {
       sender: "Narrator",
       recipient: "Mafia",
       text: `You've targeted ${villager.name} for execution`

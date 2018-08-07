@@ -118,8 +118,8 @@ Meteor.methods({
             "The hustle and bustle of the night has died down.  The dawn is nigh.  On the morning of the new day, a meeting is to be held with the township."
         })
 
-console.log(Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count(), 'mafia win')
-console.log(Mafia.find({$and: [{role: {$not: 'mafia'}},{alive:true}]}).count(), 'villager count')
+// console.log(Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count(), 'mafia win')
+// console.log(Mafia.find({$and: [{role: {$not: 'mafia'}},{alive:true}]}).count(), 'villager count')
         // if(Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() === 0){
         //   GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
         //   Messages.insert({
@@ -145,6 +145,7 @@ console.log(Mafia.find({$and: [{role: {$not: 'mafia'}},{alive:true}]}).count(), 
 
         Meteor.setTimeout(function() {
           // Mafia split their vote - nobody dies.  Targeted and saved are reset.
+          console.log('wheres my timeout')
           if (Mafia.find({targeted:true}).count()>1){
             Messages.insert({
               sender: "Narrator",
@@ -245,6 +246,27 @@ console.log(Mafia.find({$and: [{role: {$not: 'mafia'}},{alive:true}]}).count(), 
               // `${villager[0].name}'s home appears to have been wrangled in the night.  No trace of them to be found!`
           }) 
          
+        // if(Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() === 0){
+        //   GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
+        //   Messages.insert({
+        //     sender: "Narrator",
+        //     recipient: "Everyone",
+        //     text: `Good job township.  Y'all have successfully saved yourselves from the mafia.  No mafia remain.`
+        //   });
+
+        //   console.log('first if')
+        // } else if (Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() >= Mafia.find({$and: [{$not: {role:'mafia'}},{alive:true}]}).count()){
+        //   GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
+        //   Messages.insert({
+        //     sender: "Narrator",
+        //     recipient: "Everyone",
+        //     text: `Good job mafia.  You own this town.  Mafia outnumber the villagers.`
+           
+        //   });
+
+console.log('end of timer')
+
+
         }, 10000);
 
        
