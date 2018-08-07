@@ -167,6 +167,9 @@ class App extends Component {
               <Divider horizontal>Chat Area</Divider>
               <Chatbox
                 messages={this.filterMessages(this.props.currentUser[0].role)}
+                // scrollToBottom = {this.messagesEnd.scrollIntoView({ behavior: "smooth" })}
+                // componentDidMount= {this.scrollToBottom()}  
+                // componentDidUpdate= {this.scrollToBottom()}
               />
               <ChatInput
                 inputRef={this.inputRef}
