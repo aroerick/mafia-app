@@ -132,7 +132,7 @@ class App extends Component {
     // gamePhase.length > 4 && console.log(this.props)
 
     return (
-      <div>
+     
         <Container>
           <Header as="h1" block>
             Join the Township. Current population: {this.props.township.length}/6
@@ -174,7 +174,7 @@ class App extends Component {
                 isDisabled={currentUser[0].role === "mafia" ? false : true}
               />
               {(gamePhase.length >= 5 && !gamePhase[2].activePhase) ||
-              this.props.currentUser[0].hasActed ? (
+              this.props.currentUser[0].hasActed|| !this.props.currentUser[0].alive ? (
                 ""
               ) : (
                 <Buttons
@@ -186,10 +186,9 @@ class App extends Component {
                 />
               )}
 
-              {(gamePhase.length >= 5 && gamePhase[4].activePhase) ||
-              (gamePhase.length >= 5 &&
-                gamePhase[4].activePhase &&
-                !this.props.currentUser[0].hasActed) ? (
+                {(
+           gamePhase.length >= 5 &&  gamePhase[4].activePhase && !this.props.currentUser[0].hasActed && this.props.currentUser[0].alive )
+         ? (
                 <DayButtons
                   township={township}
                   currentUser={currentUser}
@@ -201,7 +200,7 @@ class App extends Component {
             </div>
           )}
         </Container>
-      </div>
+
     );
   }
 }
