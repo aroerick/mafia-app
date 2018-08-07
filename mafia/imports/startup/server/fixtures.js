@@ -62,5 +62,12 @@ Meteor.startup(() => {
       activePhase: false,
       feedback: 0
     })
+
+    GamePhase.insert({
+      phase: 6,
+      title: 'Victory',
+      activePhase: false,
+      feedback: 0
+    })
   }
 });

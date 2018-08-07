@@ -209,6 +209,8 @@ Meteor.methods({
           //ALL PEOPLE DEAD OR ALIVE NOW. DID ANYONE WIN?
           //VILLAGER WIN
           if(Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() === 0){
+            GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
+
             GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
             Messages.insert({
               sender: "Narrator",
@@ -218,6 +220,8 @@ Meteor.methods({
 
             //MAFIA WIN
           } else if (Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() >= Mafia.find({$and: [{role: {$not: /mafia/ }},{alive:true}]}).count() && Mafia.find({$and: [{role: {$not: /mafia/ }},{alive:true}]}).count() < 2){
+            GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
+
             GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
             Messages.insert({
               sender: "Narrator",
@@ -292,11 +296,25 @@ Meteor.methods({
           recipient: "Everyone",
           text: `There was too much indecision.  Nobody was lynched.  Another night shall fall.  The mafia are still amongst us.`
         });
+
+        Mafia.update({hasActed:true}, {
+          $set: {
+            hasActed:false
+          }
+        }, {multi:true});
+        Mafia.update({}, {
+          $set: {
+            votesForLynch:0
+          }
+        }, {multi:true});
+        
       }
 
       //check for wins 
 
       if(Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() === 0){
+        GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
+
         GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
         Messages.insert({
           sender: "Narrator",
@@ -305,6 +323,9 @@ Meteor.methods({
         });
 
       } else if (Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() >= Mafia.find({$and: [{role: {$not: /mafia/ }},{alive:true}]}).count() && Mafia.find({$and: [{role: {$not: /mafia/ }},{alive:true}]}).count() < 2){
+        
+        GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
+
         GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
         Messages.insert({
           sender: "Narrator",
