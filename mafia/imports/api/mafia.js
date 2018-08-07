@@ -9,7 +9,7 @@ const roleArr = [
   "doctor",
   "detective",
   "mafia",
-  "ciivlian",
+  "civilian",
   "civilian",
   
 ];
