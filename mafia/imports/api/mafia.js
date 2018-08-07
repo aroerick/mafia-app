@@ -246,24 +246,24 @@ Meteor.methods({
               // `${villager[0].name}'s home appears to have been wrangled in the night.  No trace of them to be found!`
           }) 
          
-        // if(Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() === 0){
-        //   GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
-        //   Messages.insert({
-        //     sender: "Narrator",
-        //     recipient: "Everyone",
-        //     text: `Good job township.  Y'all have successfully saved yourselves from the mafia.  No mafia remain.`
-        //   });
+        if(Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() === 0){
+          GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
+          Messages.insert({
+            sender: "Narrator",
+            recipient: "Everyone",
+            text: `Good job township.  Y'all have successfully saved yourselves from the mafia.  No mafia remain.`
+          });
 
         //   console.log('first if')
-        // } else if (Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() >= Mafia.find({$and: [{$not: {role:'mafia'}},{alive:true}]}).count()){
-        //   GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
-        //   Messages.insert({
-        //     sender: "Narrator",
-        //     recipient: "Everyone",
-        //     text: `Good job mafia.  You own this town.  Mafia outnumber the villagers.`
+        } else if (Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() >= Mafia.find({$and: [{role: {$not: 'mafia'}},{alive:true}]}).count()){
+          GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
+          Messages.insert({
+            sender: "Narrator",
+            recipient: "Everyone",
+            text: `Good job mafia.  You own this town.  Mafia outnumber the villagers.`
            
-        //   });
-
+          });
+        }
 console.log('end of timer')
 
 
@@ -321,21 +321,25 @@ console.log('end of timer')
 
       //check for wins 
 
-      // if(Mafia.find({$and: [{role:'mafia'},{alive:true}]}.count() === 0)){
-      //   GamePhase.update({ phase: 6 }, { $set: { activePhase: true } }),
-      //   Messages.insert({
-      //     sender: "Narrator",
-      //     recipient: "Everyone",
-      //     text: `Good job township.  Y'all have successfully saved yourselves from the mafia.  No mafia remain.`
-      //   });
-      // } else if (Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() >= Mafia.find({$and: [{$not: {role:'mafia'}},{alive:true}]}).count()){
-      //   GamePhase.update({ phase: 6 }, { $set: { activePhase: true } }),
-      //   Messages.insert({
-      //     sender: "Narrator",
-      //     recipient: "Everyone",
-      //     text: `Good job mafia.  You own this town.  Mafia outnumber the villagers.`
-      //   });
-      // } else {
+      if(Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() === 0){
+        GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
+        Messages.insert({
+          sender: "Narrator",
+          recipient: "Everyone",
+          text: `Good job township.  Y'all have successfully saved yourselves from the mafia.  No mafia remain.`
+        });
+
+      //   console.log('first if')
+      } else if (Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() >= Mafia.find({$and: [{role: {$not: 'mafia'}},{alive:true}]}).count()){
+        GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
+        Messages.insert({
+          sender: "Narrator",
+          recipient: "Everyone",
+          text: `Good job mafia.  You own this town.  Mafia outnumber the villagers.`
+         
+        });
+        //CHECK FOR THE WIN.  IF NO WIN. PROCEED TO RUN DAY TIME STUFF
+      } else {
         GamePhase.update({phase: 5}, {$set:{feedback: 0}})
         GamePhase.update({ phase: 5 }, { $set: { activePhase: false } }),
         GamePhase.update({ phase: 3 }, { $set: { activePhase: true } }),
@@ -361,6 +365,8 @@ console.log('end of timer')
           recipient: "Detective",
           text: "Something fishy is going on.  Who seems suspicious?"
         });
+      }
+       
   
       // }
       
