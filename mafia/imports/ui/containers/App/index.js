@@ -10,7 +10,7 @@ import Chatbox from "./../../components/Chatbox";
 import ChatInput from "./../../components/ChatInput";
 import Buttons from "./../../components/Buttons";
 import DayButtons from "./../../components/DayButtons";
-import { Input, Divider, Header, Container } from "semantic-ui-react";
+import { Input, Divider, Header, Container, Form } from "semantic-ui-react";
 // import Actions from "../../components/Actions";
 
 class App extends Component {
@@ -50,7 +50,7 @@ class App extends Component {
   };
   setTarget = (villager, currentUser) => {
     Meteor.call("player.setTarget", villager);
-    Meteor.call("messa ges.handleChatSubmit", {
+    Meteor.call("messages.handleChatSubmit", {
       sender: "Narrator",
       recipient: "Mafia",
       text: `You've targeted ${villager.name} for execution`
@@ -138,11 +138,13 @@ class App extends Component {
             Join the Township. Current population: {this.props.township.length}/6
           </Header>
           {Mafia.find({ player: currentUserId }).count() === 0 ? (
+            <Form>
+            <Form.Field>
             <input
               icon="users"
               iconPosition="left"
               type="text"
-              placeholder="Name"
+              placeholder="What's your name?"
               ref={this.playerName}
               onKeyDown={event => {
                 if (event.key == "Enter") {
@@ -150,6 +152,8 @@ class App extends Component {
                 }
               }}
             />
+            </Form.Field>
+            </Form>
           ) : (
             <div>
               <Header as="h3">Welcome to the game</Header>

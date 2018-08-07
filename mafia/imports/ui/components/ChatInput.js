@@ -1,20 +1,22 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Input } from "semantic-ui-react";
+import { Input, Form } from "semantic-ui-react";
 
 const ChatInput = ({ inputRef, handleChatSubmit, isDisabled }) => {
   // console.log(isDisabled)
   return (
     <div>
-      <form onSubmit={e => handleChatSubmit(e)}>
+      <Form onSubmit={e => handleChatSubmit(e)}>
+      <Form.Field>
         <input
           ref={inputRef}
           type="text"
           placeholder="Enter message here"
           disabled={isDisabled}
         />
-        <span> (press enter to add) </span>
-      </form>
+        {/* <label> (press enter to add) </label> */}
+        </Form.Field>
+      </Form>
     </div>
   );
 };

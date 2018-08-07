@@ -39,17 +39,13 @@ class Chatbox extends Component {
   }
 }
 
-
-
-
-
 Chatbox.propTypes = {
-    messages: PropTypes.arrayOf(
-        PropTypes.shape({
-            _id: PropTypes.string.isRequired,
-            text: PropTypes.string.isRequired,
-        })
-    )
-}
+  messages: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      text: PropTypes.string.isRequired
+    })
+  )
+};
 
 export default Chatbox;
