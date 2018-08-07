@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Button } from "semantic-ui-react"
 
 const Buttons = ({ township, currentUser, setTarget, setSaved, investigate }) => {
   message = "";
@@ -9,20 +10,20 @@ const Buttons = ({ township, currentUser, setTarget, setSaved, investigate }) =>
       message = "Choose a target";
       actions = township
         .filter(villager => villager.alive)
-        .map(villager => <button name={villager.name} onClick={() => setTarget(villager, currentUser)}>{villager.name}</button>);
+        .map(villager => <Button basic color="teal" name={villager.name} onClick={() => setTarget(villager, currentUser)}>{villager.name}</Button>);
       break;
     case "doctor":
       message = "Save someone!";
       actions = township
         .filter(villager => villager.alive)
-        .map(villager => <button name={villager.name} onClick={() => setSaved(villager, currentUser)}>{villager.name}</button>);
+        .map(villager => <Button basic color="pink" name={villager.name} onClick={() => setSaved(villager, currentUser)}>{villager.name}</Button>);
       break;
     case "detective":
       message = <span>Probe. Deep.</span>;
       actions = township
         .filter(villager => villager.alive)
         .filter(villager => currentUser[0]._id !== villager._id)
-        .map(villager => <button name={villager.name} onClick={() => investigate(villager, currentUser)}>{villager.name}</button>);
+        .map(villager => <Button basic color="orange" name={villager.name} onClick={() => investigate(villager, currentUser)}>{villager.name}</Button>);
       break;
     default:
       message = "Lullaby and Goodnight";

@@ -119,7 +119,7 @@ Meteor.methods({
         })
 
 console.log(Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count(), 'mafia win')
-console.log(Mafia.find({$and: [{$ne: {role:'mafia'}},{alive:true}]}), 'villager count')
+console.log(Mafia.find({$and: [{role: {$not: 'mafia'}},{alive:true}]}).count(), 'villager count')
         // if(Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() === 0){
         //   GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
         //   Messages.insert({

@@ -5,9 +5,11 @@ import { Message } from "semantic-ui-react";
 const Chatbox = ({ messages }) => (
   <div style={{ maxHeight: "400px", overflowY: "scroll" }}>
     {messages.map(message => (
+      <div style={{ display: "block", padding: 10}}>
       <Message
         color={message.sender === "Narrator" ? "olive" : "grey"}
         floating
+        compact
         key={message._id}
       >
         <Message.Header style={{ fontWeight: 600 }}>
@@ -15,6 +17,7 @@ const Chatbox = ({ messages }) => (
         </Message.Header>
         {message.text}
       </Message>
+      </div>
     ))}
   </div>
 );
