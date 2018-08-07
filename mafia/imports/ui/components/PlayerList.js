@@ -14,14 +14,6 @@ const PlayerList = ({ township }) => (
               Status: {person.alive ? "is alive" : "is dead"}
             </List.Description>
           </List.Content>
-          {/* <input type="checkbox" 
-    id={todo._id} checked={todo.completed}
-     onChange = {() => handleCheckbox(todo)}/>
-    <label htmlFor={todo._id} /> */}
-
-          {/* <button onClick = {()=>handleDeleteTodo(todo)} >
-      <i className="fa fa-trash" />
-</button>*/}
         </List.Item>
       ))}
     </List>
