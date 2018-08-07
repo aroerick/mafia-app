@@ -17,6 +17,22 @@ const targetedVillager = Mafia.find({ targeted: true });
 const savedVillager = Mafia.find({ saved: true });
 
 Meteor.methods({
+  "game.resetAll"() {
+    Mafia.remove({livingPlayer: true})
+    Mafia.update({},
+      {
+        $set: {
+          alive: true,
+          votesForLynch: 0,
+          targeted: false,
+          saved: false
+        }
+      },
+      { multi: true })
+    Messages.remove({})
+    GamePhase.update({ activePhase: true }, { activePhase: false })
+    GamePhase.update({ phase: 1 }, { activePhase: true })
+  },
   "player.createNew"(name) {
     if (Mafia.find().count() < 6) {
       Mafia.insert({
@@ -309,7 +325,7 @@ Meteor.methods({
       }).count() === feedback
     ) {
       let lynchedPlayer = Mafia.findOne({}, { sort: { votesForLynch: -1 } });
-      if (lynchedPlayer.votesForLynch >= feedback / 2) {
+      if (lynchedPlayer.votesForLynch > feedback / 2) {
         Messages.insert({
           sender: "Narrator",
           recipient: "Everyone",

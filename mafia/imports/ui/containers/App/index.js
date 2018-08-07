@@ -10,13 +10,22 @@ import Chatbox from "./../../components/Chatbox";
 import ChatInput from "./../../components/ChatInput";
 import Buttons from "./../../components/Buttons";
 import DayButtons from "./../../components/DayButtons";
-import { Divider, Header, Container, Form } from "semantic-ui-react";
+import { Button, Divider, Header, Container, Form } from "semantic-ui-react";
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.inputRef = React.createRef();
     this.playerName = React.createRef();
+  }
+
+  reset = () => {
+    Meteor.call("game.resetAll")
+    Meteor.call("messages.handleChatSubmit", {
+      sender: 'Narrator',
+      recipient: 'Everyone',
+      text: 'An unsettling energy stirs in the township.  There are rumours the mafia will visit an unlucky villager tonight.'
+    })
   }
 
   handleChatSubmit = e => {
@@ -129,6 +138,7 @@ class App extends Component {
 
     return (
       <Container>
+        <Button color="red" onClick={this.reset} content="BOOM"/>
         <Header as="h1" block>
           Join the Township. Current population: {this.props.township.length}/6
         </Header>
@@ -165,7 +175,7 @@ class App extends Component {
             <ChatInput
               inputRef={this.inputRef}
               handleChatSubmit={this.handleChatSubmit}
-              isDisabled={currentUser[0].role === "mafia" ? false : true}
+              isDisabled={(currentUser[0].role !== "mafia" && gamePhase[2].activePhase) ? (true) : (false)}
             />
             {(gamePhase.length >= 5 && !gamePhase[2].activePhase) ||
             this.props.currentUser[0].hasActed ||
