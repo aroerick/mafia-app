@@ -1,12 +1,14 @@
 import React from "react";
 import PropTypes from 'prop-types';
+import { Message } from 'semantic-ui-react';
 
 const Chatbox = ({ messages }) => (
 
   <div style={{maxHeight: '400px', overflowY:'scroll'}}>
-    <ul>{messages.map(message => 
-    <li><p style={{fontWeight: 600}}>{message.sender} to {message.recipient}:</p>
-    <span key={message._id}> {message.text} 
+    {messages.map(message => 
+    <Message color={(message.sender === 'Narrator') ? "olive" : "grey"}floating key={message._id}><Message.Header style={{fontWeight: 600}}>{message.sender} to {message.recipient}:</Message.Header>
+    {/* <span>  */}
+    {message.text} 
     {/* <input type="checkbox" 
     id={todo._id} checked={todo.completed}
      onChange = {() => handleCheckbox(todo)}/>
@@ -15,7 +17,8 @@ const Chatbox = ({ messages }) => (
     <button onClick = {()=>handleDeleteTodo(todo)} >
       <i className="fa fa-trash" /> */}
     {/* </button> */}
-    </span></li>)}</ul>
+    {/* </span> */}
+    </Message>)}
   </div>
 );
 
