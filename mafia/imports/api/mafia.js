@@ -106,7 +106,7 @@ Meteor.methods({
       feedback++
       GamePhase.update({phase: 3}, {$set:{feedback: feedback}})
 
-
+//IF WE HAVE RECEIVED ENOUGH FEEDBACK...THEN FIGURE OUT WHOS DYING OR NAH - ONLY IF... I THINK.
       if (Mafia.find({ $and: [ { alive: true }, {role: {$not:{$eq:'civilian'}}}]}).count() === feedback){
         GamePhase.update({ phase: 3 }, { $set: { activePhase: false } });
         GamePhase.update({ phase: 4 }, { $set: { activePhase: true } });
@@ -118,34 +118,8 @@ Meteor.methods({
             "The hustle and bustle of the night has died down.  The dawn is nigh.  On the morning of the new day, a meeting is to be held with the township."
         })
 
-// console.log(Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count(), 'mafia win')
-// console.log(Mafia.find({$and: [{role: {$not: 'mafia'}},{alive:true}]}).count(), 'villager count')
-        // if(Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() === 0){
-        //   GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
-        //   Messages.insert({
-        //     sender: "Narrator",
-        //     recipient: "Everyone",
-        //     text: `Good job township.  Y'all have successfully saved yourselves from the mafia.  No mafia remain.`
-        //   });
-
-        //   console.log('first if')
-        // } else if (Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() >= Mafia.find({$and: [{$not: {role:'mafia'}},{alive:true}]}).count()){
-        //   GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
-        //   Messages.insert({
-        //     sender: "Narrator",
-        //     recipient: "Everyone",
-        //     text: `Good job mafia.  You own this town.  Mafia outnumber the villagers.`
-           
-        //   });
-        //   console.log('else if')
-
-        // } else {
-
- 
-
         Meteor.setTimeout(function() {
           // Mafia split their vote - nobody dies.  Targeted and saved are reset.
-          console.log('wheres my timeout')
           if (Mafia.find({targeted:true}).count()>1){
             Messages.insert({
               sender: "Narrator",
@@ -207,14 +181,11 @@ Meteor.methods({
                 sender: "Narrator",
                 recipient: "Everyone",
                 text:`We noticed ${targeted[0].name} didnt show up to the morning meeting.  There's no trace of them to be found and their home is a wrangled disaster.  What poor misfortune befell our poor ${targeted[0].name}??`
-  
-                  // `${villager[0].name}'s home appears to have been wrangled in the night.  No trace of them to be found!`
               }) 
   
               Mafia.update({targeted:true}, {
                 $set: {
-                  alive: false
-                ,
+                  alive: false,
                   targeted: false
                 }
               });
@@ -234,39 +205,43 @@ Meteor.methods({
             }
   
           }
-          GamePhase.update({phase: 3}, {$set:{feedback: 0}})
-          GamePhase.update({ phase: 4 }, { $set: { activePhase: false } });
-          GamePhase.update({ phase: 5 }, { $set: { activePhase: true } });
-          
-          Messages.insert({
-            sender: "Narrator",
-            recipient: "Everyone",
-            text:`The town still feels strange.  Somebody is here who's looking to start trouble.  Perhaps we should get rid of them?  What say the town people?`
-  
-              // `${villager[0].name}'s home appears to have been wrangled in the night.  No trace of them to be found!`
-          }) 
+
+          //ALL PEOPLE DEAD OR ALIVE NOW. DID ANYONE WIN?
+          //VILLAGER WIN
+          if(Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() === 0){
+            GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
+            Messages.insert({
+              sender: "Narrator",
+              recipient: "Everyone",
+              text: `Good job township.  Y'all have successfully saved yourselves from the mafia.  No mafia remain.`
+            });
+
+            //MAFIA WIN
+          } else if (Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() >= Mafia.find({$and: [{role: {$not: /mafia/ }},{alive:true}]}).count() && Mafia.find({$and: [{role: {$not: /mafia/ }},{alive:true}]}).count() < 2){
+            GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
+            Messages.insert({
+              sender: "Narrator",
+              recipient: "Everyone",
+              text: `Good job mafia.  You own this town.  Mafia outnumber the villagers.`
+             
+            });
+            //IF NOBODY WINS. PROOCED BACK TO PHASE 5 - DAY LYNCHING 
+          }else {
+            GamePhase.update({phase: 3}, {$set:{feedback: 0}})
+            GamePhase.update({ phase: 4 }, { $set: { activePhase: false } });
+            GamePhase.update({ phase: 5 }, { $set: { activePhase: true } });
+            
+            Messages.insert({
+              sender: "Narrator",
+              recipient: "Everyone",
+              text:`The town still feels strange.  Somebody is here who's looking to start trouble.  Perhaps we should get rid of them?  What say the town people?`
+            }) 
+          }
+
+
+       
          
-        if(Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() === 0){
-          GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
-          Messages.insert({
-            sender: "Narrator",
-            recipient: "Everyone",
-            text: `Good job township.  Y'all have successfully saved yourselves from the mafia.  No mafia remain.`
-          });
-
-        //   console.log('first if')
-        } else if (Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() >= Mafia.find({$and: [{role: {$not: 'mafia'}},{alive:true}]}).count()){
-          GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
-          Messages.insert({
-            sender: "Narrator",
-            recipient: "Everyone",
-            text: `Good job mafia.  You own this town.  Mafia outnumber the villagers.`
-           
-          });
-        }
-console.log('end of timer')
-
-
+    
         }, 10000);
 
        
@@ -329,8 +304,7 @@ console.log('end of timer')
           text: `Good job township.  Y'all have successfully saved yourselves from the mafia.  No mafia remain.`
         });
 
-      //   console.log('first if')
-      } else if (Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() >= Mafia.find({$and: [{role: {$not: 'mafia'}},{alive:true}]}).count()){
+      } else if (Mafia.find({$and: [{role:'mafia'},{alive:true}]}).count() >= Mafia.find({$and: [{role: {$not: /mafia/ }},{alive:true}]}).count() && Mafia.find({$and: [{role: {$not: /mafia/ }},{alive:true}]}).count() < 2){
         GamePhase.update({ phase: 6 }, { $set: { activePhase: true } })
         Messages.insert({
           sender: "Narrator",
@@ -372,10 +346,6 @@ console.log('end of timer')
       
      
     }
-
-    //NEED TO SOMEHOW FIGURE OUT HOW MANY TIMES PEOPLE HAVE BEEN VOTED FOR...? Rule? at least half of people alive should vote for u for u to be lynched
-    // RESET FEED BACK - SEND TOWN TO PHASE 2 TO START AGAIN 
-    // INSERT CHECK FOR WIN CONDITIONS
 },
 
 });
