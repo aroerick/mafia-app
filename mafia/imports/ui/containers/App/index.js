@@ -157,13 +157,15 @@ filterMessages = (role) => {
             <PlayerList township={township} />
             <hr />////CHAT AREA////<hr />
                     <Chatbox messages={this.filterMessages(this.props.currentUser[0].role)}/>
+
+                  {/* TODO: REMOVE CHATBOX FOR DEAD PEOPLE */}
             <ChatInput
               inputRef={this.inputRef}
               handleChatSubmit={this.handleChatSubmit}
-              isDisabled={currentUser[0].role === "mafia" ? false : true}
+              isDisabled={currentUser[0].role === "mafia" ? false : true }
             />
             {(gamePhase.length >= 5 && !gamePhase[2].activePhase ||
-            this.props.currentUser[0].hasActed )
+            this.props.currentUser[0].hasActed || !this.props.currentUser[0].alive )
          ? (
               ""
             ) : (
@@ -176,8 +178,8 @@ filterMessages = (role) => {
               />
             )}
 
-             {(gamePhase.length >= 5 && gamePhase[4].activePhase ||
-           gamePhase.length >= 5 &&  gamePhase[4].activePhase && !this.props.currentUser[0].hasActed )
+             {(
+           gamePhase.length >= 5 &&  gamePhase[4].activePhase && !this.props.currentUser[0].hasActed && this.props.currentUser[0].alive )
          ? (
           <DayButtons
           township={township}

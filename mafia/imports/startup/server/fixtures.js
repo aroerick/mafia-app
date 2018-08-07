@@ -8,12 +8,14 @@ Meteor.startup(() => {
     Mafia.insert({
       name: 'Testing Tina',
       role: 'civilian',
-      alive: false
+      alive: false,
+      votesForLynch: 0
     })
     Mafia.insert({
       name: 'Testing Timothy',
       role: 'civilian',
-      alive: true
+      alive: true,
+      votesForLynch: 0
     })
     // Mafia.insert({
     //   name: 'Testing Tabitha',
@@ -57,7 +59,8 @@ Meteor.startup(() => {
     GamePhase.insert({
       phase: 5,
       title: 'Town Lynching',
-      activePhase: false
+      activePhase: false,
+      feedback: 0
     })
   }
 });
