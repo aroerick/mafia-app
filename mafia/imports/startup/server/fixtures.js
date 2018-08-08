@@ -4,25 +4,25 @@ import { Messages } from '../../api/mafia'
 import { GamePhase } from '../../api/mafia'
 
 Meteor.startup(() => {
-  if (Mafia.find().count() === 0) {
-    Mafia.insert({
-      name: 'Testing Tina',
-      role: 'civilian',
-      alive: false,
-      votesForLynch: 0
-    })
-    Mafia.insert({
-      name: 'Testing Timothy',
-      role: 'civilian',
-      alive: true,
-      votesForLynch: 0
-    })
-    // Mafia.insert({
-    //   name: 'Testing Tabitha',
-    //   role: 'mafia',
-    //   alive: true
-    // })
-  }
+  // if (Mafia.find().count() === 0) {
+  //   Mafia.insert({
+  //     name: 'Testing Tina',
+  //     role: 'civilian',
+  //     alive: false,
+  //     votesForLynch: 0
+  //   })
+  //   Mafia.insert({
+  //     name: 'Testing Timothy',
+  //     role: 'civilian',
+  //     alive: true,
+  //     votesForLynch: 0
+  //   })
+  //   // Mafia.insert({
+  //   //   name: 'Testing Tabitha',
+  //   //   role: 'mafia',
+  //   //   alive: true
+  //   // })
+  // }
 
   if (Messages.find().count() === 0) {
     Messages.insert({
@@ -59,6 +59,13 @@ Meteor.startup(() => {
     GamePhase.insert({
       phase: 5,
       title: 'Town Lynching',
+      activePhase: false,
+      feedback: 0
+    })
+
+    GamePhase.insert({
+      phase: 6,
+      title: 'Victory',
       activePhase: false,
       feedback: 0
     })
