@@ -43,8 +43,9 @@ Meteor.methods({
       },
       { multi: true })
     Messages.remove({})
-    GamePhase.update({ activePhase: true }, { activePhase: false })
-    GamePhase.update({ phase: 1 }, { activePhase: true })
+    GamePhase.update({ activePhase: true }, {$set: { activePhase: false }}, { multi: true })
+    GamePhase.update({ phase: 1 }, {$set: { activePhase: true }})
+    GamePhase.update({}, {$set: { feedback: 0 }}, { multi: true })
     roleArr = [
       "mafia",
       "doctor",
@@ -54,7 +55,6 @@ Meteor.methods({
       "civilian"
     ];
     let shuffledRoles = shuffler(roleArr)
-    console.log(shuffledRoles)
   },
   "player.createNew"(name) {
     if (Mafia.find().count() < 6) {
