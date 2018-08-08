@@ -4,6 +4,21 @@ export const Mafia = new Mongo.Collection("mafia");
 export const GamePhase = new Mongo.Collection("gamePhase");
 export const Messages = new Mongo.Collection("messages");
 
+if (Meteor.isServer){
+  // Meteor.publish('currentPlayer', function currentPlayerPublication(){
+  //   return Mafia.find({player: Meteor.userId() })
+  // })
+  Meteor.publish('players', function playersPublication(){
+    return Mafia.find({},{fields: {role: 0, votesForLynch:0} })
+  })
+  Meteor.publish('gamePhases', function gamePhasesPublication(){
+    return GamePhase.find({})
+  })
+  Meteor.publish('messages', function messagesPublication(){
+    return Messages.find({})
+  })
+}
+
 let roleArr = [
   "mafia",
   "doctor",
@@ -107,6 +122,7 @@ Meteor.methods({
       }, 10000);
   },
   "messages.handleChatSubmit"(message) {
+    //TODO: Allow current user to submit messages for themselvese only
     Messages.insert(message);
   },
   "player.setTarget"(villager) {
