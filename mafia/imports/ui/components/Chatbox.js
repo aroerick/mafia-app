@@ -18,12 +18,11 @@ class Chatbox extends Component {
     return (
       <div style={{ maxHeight: "400px", overflowY: "scroll" }}>
         {messages.map(message => (
-          <div style={{ display: "block", padding: 10 }}>
+          <div key={message._id} style={{ display: "block", padding: 10 }}>
             <Message
               compact
               color={message.sender === "Narrator" ? "olive" : "grey"}
               floating
-              key={message._id}
             >
               <Message.Header style={{ fontWeight: 600 }}>
                 {message.sender} to {message.recipient}:

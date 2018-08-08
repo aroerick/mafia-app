@@ -9,7 +9,8 @@ if (Meteor.isServer){
     return Mafia.find({player: Meteor.userId() })
   })
   Meteor.publish('players', function playersPublication(){
-    return Mafia.find({},{fields: {role: 0, votesForLynch:0} })
+    return Mafia.find({})
+    // ,{fields: {role: 1, votesForLynch:0} }
   })
   Meteor.publish('gamePhases', function gamePhasesPublication(){
     return GamePhase.find({})
@@ -19,6 +20,7 @@ if (Meteor.isServer){
   })
   Meteor.publish('messagesForRole', function messagesForRolePublication(){
     const currentUser = Mafia.find({ player: Meteor.userId() }).fetch()
+    console.log(currentUser)
 
     switch(currentUser[0].role) {
       case "mafia": {
