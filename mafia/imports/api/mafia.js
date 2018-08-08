@@ -5,13 +5,26 @@ export const GamePhase = new Mongo.Collection("gamePhase");
 export const Messages = new Mongo.Collection("messages");
 
 let roleArr = [
-  // "mafia",
-  // "doctor",
-  // "detective",
-  // "mafia",
-  // "civilian",
-  // "civilian"
+  "mafia",
+  "doctor",
+  "detective",
+  "mafia",
+  "civilian",
+  "civilian"
 ];
+const shuffler = (arr) => {
+  // Special thanks to CoolAJ86
+  // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+  let currentIndex = arr.length, temporaryValue, randomIndex;
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    temporaryValue = arr[currentIndex];
+    arr[currentIndex] = arr[randomIndex];
+    arr[randomIndex] = temporaryValue;
+  }
+  return arr;
+}
 
 const targetedVillager = Mafia.find({ targeted: true });
 const savedVillager = Mafia.find({ saved: true });
@@ -30,12 +43,18 @@ Meteor.methods({
       },
       { multi: true })
     Messages.remove({})
-    GamePhase.update({ activePhase: true }, { activePhase: false })
-    GamePhase.update({ phase: 1 }, { activePhase: true })
-      roleArr = [...roleArr, "mafia",
+    GamePhase.update({ activePhase: true }, {$set: { activePhase: false }}, { multi: true })
+    GamePhase.update({ phase: 1 }, {$set: { activePhase: true }})
+    GamePhase.update({}, {$set: { feedback: 0 }}, { multi: true })
+    roleArr = [
+      "mafia",
       "doctor",
       "detective",
-      "mafia"]
+      "mafia",
+      "civilian",
+      "civilian"
+    ];
+    let shuffledRoles = shuffler(roleArr)
   },
   "player.createNew"(name) {
     if (Mafia.find().count() < 6) {
