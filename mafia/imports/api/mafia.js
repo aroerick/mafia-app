@@ -5,9 +5,9 @@ export const GamePhase = new Mongo.Collection("gamePhase");
 export const Messages = new Mongo.Collection("messages");
 
 if (Meteor.isServer){
-  // Meteor.publish('currentPlayer', function currentPlayerPublication(){
-  //   return Mafia.find({player: Meteor.userId() })
-  // })
+  Meteor.publish('currentPlayer', function currentPlayerPublication(){
+    return Mafia.find({player: Meteor.userId() })
+  })
   Meteor.publish('players', function playersPublication(){
     return Mafia.find({},{fields: {role: 0, votesForLynch:0} })
   })
