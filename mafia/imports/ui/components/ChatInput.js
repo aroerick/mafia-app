@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Form } from "semantic-ui-react";
+import { Form, Label } from "semantic-ui-react";
 
 const ChatInput = ({
   inputRef,
@@ -12,9 +12,6 @@ const ChatInput = ({
   return (
     <div>
       <Form onSubmit={e => handleChatSubmit(e)}>
-        {currentUser[0].role === "mafia" ? (
-          <Form.Checkbox toggle label="Mafia Chat" onChange={toggleMafiaChat} />
-        ) : null}
         <Form.Field>
           <input
             ref={inputRef}
@@ -23,6 +20,13 @@ const ChatInput = ({
             disabled={isDisabled}
           />
         </Form.Field>
+        {currentUser[0].role === "mafia" ? (
+          <Form.Group>
+            <Label content="All Chat" size="tiny" pointing="right" />
+            <Form.Checkbox slider onChange={toggleMafiaChat} />
+            <Label content="Mafia Chat" size="tiny" pointing="left"/>
+          </Form.Group>
+        ) : null}
       </Form>
     </div>
   );

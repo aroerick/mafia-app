@@ -165,8 +165,6 @@ class App extends Component {
           <Form>
             <Form.Field>
               <input
-                icon="users"
-                iconPosition="left"
                 type="text"
                 placeholder="What's your name?"
                 ref={this.playerName}
