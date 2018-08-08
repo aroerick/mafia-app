@@ -196,51 +196,95 @@ Meteor.methods({
         }
         // Mafia picked the same villager as the doctor.  Villager lives.  Targeted and saved are reset.
         else if (Mafia.find({ targeted: true }).count() === 1) {
-          let targeted = Mafia.find({ targeted: true }).fetch();
-          let saved = Mafia.find({ saved: true }).fetch();
-          if (saved[0].name === targeted[0].name) {
-            let villager = Mafia.find({ targeted: true }).fetch();
-
-            Messages.insert({
-              sender: "Narrator",
-              recipient: "Everyone",
-              text: `${
-                saved[0].name
-              } hosted a party at their place last night... the doctor was there... the mafia was there... nobody was up to any funny business`
-            });
-            Mafia.update(
-              { targeted: true },
-              {
-                $set: {
-                  targeted: false
-                }
-              }
-            );
-            Mafia.update(
-              { saved: true },
-              {
-                $set: {
-                  saved: false
-                }
-              }
-            );
-            Mafia.update(
-              { hasActed: true },
-              {
-                $set: {
-                  hasActed: false
-                }
-              },
-              { multi: true }
-            );
-
-            // Mafia and doctor visited different people.  The villager visited by the mafia has died.
-          } else if (
-            Mafia.find({ targeted: true }).fetch() !==
-            Mafia.find({ saved: true }).fetch()
-          ) {
+          //IF THE DOCTOR IS ALIVE - THEN CHECK SAVED.
+          if(Mafia.find({ $and: [{ role: "doctor" }, { alive: true }] }).count()===1){
             let targeted = Mafia.find({ targeted: true }).fetch();
-
+            let saved = Mafia.find({ saved: true }).fetch();
+            if (saved[0].name === targeted[0].name) {
+              let villager = Mafia.find({ targeted: true }).fetch();
+  
+              Messages.insert({
+                sender: "Narrator",
+                recipient: "Everyone",
+                text: `${
+                  saved[0].name
+                } hosted a party at their place last night... the doctor was there... the mafia was there... nobody was up to any funny business`
+              });
+              Mafia.update(
+                { targeted: true },
+                {
+                  $set: {
+                    targeted: false
+                  }
+                }
+              );
+              Mafia.update(
+                { saved: true },
+                {
+                  $set: {
+                    saved: false
+                  }
+                }
+              );
+              Mafia.update(
+                { hasActed: true },
+                {
+                  $set: {
+                    hasActed: false
+                  }
+                },
+                { multi: true }
+              );
+  
+              // Mafia and doctor visited different people.  The villager visited by the mafia has died.
+            } else if (
+              Mafia.find({ targeted: true }).fetch() !==
+              Mafia.find({ saved: true }).fetch()
+            ) {
+              let targeted = Mafia.find({ targeted: true }).fetch();
+  
+              Messages.insert({
+                sender: "Narrator",
+                recipient: "Everyone",
+                text: `We noticed ${
+                  targeted[0].name
+                } didnt show up to the morning meeting.  There's no trace of them to be found and their home is a wrangled disaster.  What poor misfortune befell our poor ${
+                  targeted[0].name
+                }??`
+              });
+  
+              Mafia.update(
+                { targeted: true },
+                {
+                  $set: {
+                    alive: false,
+                    targeted: false
+                  }
+                }
+              );
+  
+              Mafia.update(
+                { saved: true },
+                {
+                  $set: {
+                    saved: false
+                  }
+                }
+              );
+              Mafia.update(
+                { hasActed: true },
+                {
+                  $set: {
+                    hasActed: false
+                  }
+                },
+                { multi: true }
+              );
+            }
+            //IF THE DOCTOR IS DEAD, JUST KILL THE TARGET
+          } else {
+            let targeted = Mafia.find({ targeted: true }).fetch();
+  
             Messages.insert({
               sender: "Narrator",
               recipient: "Everyone",
@@ -279,6 +323,7 @@ Meteor.methods({
               { multi: true }
             );
           }
+   
         }
         //ALL PEOPLE DEAD OR ALIVE NOW. DID ANYONE WIN?
         //VILLAGER WIN
