@@ -27,6 +27,7 @@ class Game extends Component {
         recipient: 'Everyone',
         text: 'An unsettling energy stirs in the township.  There are rumours the mafia will visit an unlucky villager tonight.'
       })
+      this.setState({ mafiaChatActive: false })
     }
   
     handleChatSubmit = e => {

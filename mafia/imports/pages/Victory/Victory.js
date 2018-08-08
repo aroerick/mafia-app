@@ -1,5 +1,5 @@
-const Victory = () => {
-      return  (<div>Victory</div>)
-};
+const Victory = () => (
+      <div>Victory</div>
+)
 
 export default Victory
