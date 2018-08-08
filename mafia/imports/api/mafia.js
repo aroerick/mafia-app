@@ -367,7 +367,7 @@ Meteor.methods({
         ) {
           GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
 
-          GamePhase.update({ phase: 6 }, { $set: { activePhase: true } });
+          GamePhase.update({ phase: 6 }, { $set: { activePhase: true, winner:'villagers' } });
           Messages.insert({
             sender: "Narrator",
             recipient: "Everyone",
@@ -386,7 +386,7 @@ Meteor.methods({
         ) {
           GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
 
-          GamePhase.update({ phase: 6 }, { $set: { activePhase: true } });
+          GamePhase.update({ phase: 6 }, { $set: { activePhase: true , winner: 'mafia'} });
           Messages.insert({
             sender: "Narrator",
             recipient: "Everyone",

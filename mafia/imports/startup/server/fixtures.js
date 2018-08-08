@@ -67,7 +67,8 @@ Meteor.startup(() => {
       phase: 6,
       title: 'Victory',
       activePhase: false,
-      feedback: 0
+      feedback: 0,
+      winner: ''
     })
   }
 });
