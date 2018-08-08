@@ -137,80 +137,84 @@ class Victory extends Component {
     } = this.props;
 
     return (
-      <Container>
-        <Button color="red" onClick={this.reset} content="BOOM"/>
-        <Header as="h1" block>
-        
-        VICTORY PAGE
-      </Header>
-        <Header as="h1" block>
-
-          Join the Township. Current population: {this.props.township.length}/6
-        </Header>
-        {Mafia.find({ player: currentUserId }).count() === 0 ? (
-          <Form>
-            <Form.Field>
-              <input
-                icon="users"
-                iconPosition="left"
-                type="text"
-                placeholder="What's your name?"
-                ref={this.playerName}
-                onKeyDown={event => {
-                  if (event.key == "Enter") {
-                    this.joinGame();
-                  }
-                }}
-              />
-            </Form.Field>
-          </Form>
-        ) : (
-          <div>
-            <Header as="h3">Welcome to the game</Header>
-            <Header as="h2" dividing>
-              {" "}
-              Hello {this.props.currentUser[0].name}, you have been assigned the
-              role of: {this.props.currentUser[0].role}{" "}
+        (this.props.currentUser ? 
+            <Container>
+            <Button color="red" onClick={this.reset} content="BOOM"/>
+            <Header as="h1" block>
+            
+            VICTORY PAGE
+          </Header>
+            <Header as="h1" block>
+    
+              Join the Township. Current population: {this.props.township.length}/6
             </Header>
-            <PlayerList township={township} />
-            <Divider horizontal>Chat Area</Divider>
-            <Chatbox
-              messages={this.filterMessages(this.props.currentUser[0].role)}
-            />
-            <ChatInput
-              inputRef={this.inputRef}
-              handleChatSubmit={this.handleChatSubmit}
-              isDisabled={(currentUser[0].role !== "mafia" && gamePhase.length>= 5 && gamePhase[2].activePhase) || !currentUser[0].alive ? (true) : (false)}
-            />
-            {(gamePhase.length >= 5 && !gamePhase[2].activePhase) ||
-            this.props.currentUser[0].hasActed ||
-            !this.props.currentUser[0].alive ? (
-              ""
+            {Mafia.find({ player: currentUserId }).count() === 0 ? (
+              <Form>
+                <Form.Field>
+                  <input
+                    icon="users"
+                    iconPosition="left"
+                    type="text"
+                    placeholder="What's your name?"
+                    ref={this.playerName}
+                    onKeyDown={event => {
+                      if (event.key == "Enter") {
+                        this.joinGame();
+                      }
+                    }}
+                  />
+                </Form.Field>
+              </Form>
             ) : (
-              <Buttons
-                township={township}
-                currentUser={currentUser}
-                setTarget={this.setTarget}
-                setSaved={this.setSaved}
-                investigate={this.investigate}
-              />
+              <div>
+                <Header as="h3">Welcome to the game</Header>
+                <Header as="h2" dividing>
+                  {" "}
+                  Hello {this.props.currentUser[0].name}, you have been assigned the
+                  role of: {this.props.currentUser[0].role}{" "}
+                </Header>
+                <PlayerList township={township} />
+                <Divider horizontal>Chat Area</Divider>
+                <Chatbox
+                  messages={this.filterMessages(this.props.currentUser[0].role)}
+                />
+                <ChatInput
+                  inputRef={this.inputRef}
+                  handleChatSubmit={this.handleChatSubmit}
+                  isDisabled={(currentUser[0].role !== "mafia" && gamePhase.length>= 5 && gamePhase[2].activePhase) || !currentUser[0].alive ? (true) : (false)}
+                />
+                {(gamePhase.length >= 5 && !gamePhase[2].activePhase) ||
+                this.props.currentUser[0].hasActed ||
+                !this.props.currentUser[0].alive ? (
+                  ""
+                ) : (
+                  <Buttons
+                    township={township}
+                    currentUser={currentUser}
+                    setTarget={this.setTarget}
+                    setSaved={this.setSaved}
+                    investigate={this.investigate}
+                  />
+                )}
+    
+                {gamePhase.length >= 5 &&
+                gamePhase[4].activePhase &&
+                !this.props.currentUser[0].hasActed &&
+                this.props.currentUser[0].alive ? (
+                  <DayButtons
+                    township={township}
+                    currentUser={currentUser}
+                    setLynchTarget={this.setLynchTarget}
+                  />
+                ) : (
+                  ""
+                )}
+              </div>
             )}
-
-            {gamePhase.length >= 5 &&
-            gamePhase[4].activePhase &&
-            !this.props.currentUser[0].hasActed &&
-            this.props.currentUser[0].alive ? (
-              <DayButtons
-                township={township}
-                currentUser={currentUser}
-                setLynchTarget={this.setLynchTarget}
-              />
-            ) : (
-              ""
-            )}
-          </div>
-        )}
-      </Container>
+          </Container>
+          : ''
+        )
+      
     );
   }
 }

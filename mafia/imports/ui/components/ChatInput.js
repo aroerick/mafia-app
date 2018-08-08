@@ -20,7 +20,7 @@ const ChatInput = ({
             disabled={isDisabled}
           />
         </Form.Field>
-        {currentUser[0].role === "mafia" ? (
+        {currentUser && currentUser[0].role === "mafia" ? (
           <Form.Group>
             <Label content="All Chat" size="tiny" pointing="right" />
             <Form.Checkbox slider onChange={toggleMafiaChat} />
