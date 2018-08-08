@@ -4,13 +4,13 @@ export const Mafia = new Mongo.Collection("mafia");
 export const GamePhase = new Mongo.Collection("gamePhase");
 export const Messages = new Mongo.Collection("messages");
 
-const roleArr = [
-  "mafia",
-  "doctor",
-  "detective",
-  "mafia",
-  "civilian",
-  "civilian"
+let roleArr = [
+  // "mafia",
+  // "doctor",
+  // "detective",
+  // "mafia",
+  // "civilian",
+  // "civilian"
 ];
 
 const targetedVillager = Mafia.find({ targeted: true });
@@ -32,6 +32,10 @@ Meteor.methods({
     Messages.remove({})
     GamePhase.update({ activePhase: true }, { activePhase: false })
     GamePhase.update({ phase: 1 }, { activePhase: true })
+      roleArr = [...roleArr, "mafia",
+      "doctor",
+      "detective",
+      "mafia"]
   },
   "player.createNew"(name) {
     if (Mafia.find().count() < 6) {

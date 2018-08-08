@@ -175,7 +175,7 @@ class App extends Component {
             <ChatInput
               inputRef={this.inputRef}
               handleChatSubmit={this.handleChatSubmit}
-              isDisabled={(currentUser[0].role !== "mafia" && gamePhase[2].activePhase) ? (true) : (false)}
+              isDisabled={(currentUser[0].role !== "mafia" && gamePhase[2].activePhase) || !currentUser[0].alive ? (true) : (false)}
             />
             {(gamePhase.length >= 5 && !gamePhase[2].activePhase) ||
             this.props.currentUser[0].hasActed ||
