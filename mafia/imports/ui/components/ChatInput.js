@@ -12,7 +12,7 @@ const ChatInput = ({
   return (
     <div>
       <Form onSubmit={e => handleChatSubmit(e)}>
-        {currentUser[0].role === "mafia" ? (
+        {currentUser && currentUser[0].role === "mafia" ? (
           <Form.Checkbox toggle label="Mafia Chat" onChange={toggleMafiaChat} />
         ) : null}
         <Form.Field>
