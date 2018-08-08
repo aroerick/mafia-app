@@ -211,7 +211,7 @@ class App extends Component {
 }
 
 export default withTracker(() => {
-  // Meteor.subscribe('currentPlayer');
+  Meteor.subscribe('currentPlayer');
   Meteor.subscribe('gamePhases');
   Meteor.subscribe('players');
   Meteor.subscribe('messages')
