@@ -17,6 +17,7 @@ class App extends Component {
     super(props);
     this.inputRef = React.createRef();
     this.playerName = React.createRef();
+    this.state = { mafiaChatActive: false }
   }
 
   reset = () => {
@@ -29,6 +30,7 @@ class App extends Component {
   }
 
   handleChatSubmit = e => {
+    console.log('pickle')
     e.preventDefault();
     let inputRef = this.inputRef.current;
     let currentUser = this.props.currentUser[0];
@@ -36,12 +38,31 @@ class App extends Component {
       Meteor.call("messages.handleChatSubmit", {
         text: inputRef.value,
         sender: currentUser.name,
-        recipient: "Everyone",
-        role: currentUser.role
+        recipient: "Everyone"
       });
       this.inputRef.current.value = "";
     }
   };
+  handleMafiaChatSubmit = e => {
+    console.log('hello')
+    e.preventDefault();
+    let inputRef = this.inputRef.current;
+    let currentUser = this.props.currentUser[0];
+    if (inputRef.value) {
+      Meteor.call("messages.handleChatSubmit", {
+        text: inputRef.value,
+        sender: currentUser.name,
+        recipient: "Mafia"
+      });
+      this.inputRef.current.value = "";
+    }
+  };
+  toggleMafiaChat = () => {
+    this.setState(prevState => ({
+      mafiaChatActive: !prevState.mafiaChatActive
+    }))
+    console.log(this.state.mafiaChatActive)
+  }
 
   joinGame = () => {
     let playerName = this.playerName.current;
@@ -135,7 +156,7 @@ class App extends Component {
       gamePhase,
       currentUser
     } = this.props;
-
+    console.log(this.mafiaChatActive)
     return (
       <Container>
         <Button color="red" onClick={this.reset} content="BOOM"/>
@@ -174,8 +195,10 @@ class App extends Component {
             />
             <ChatInput
               inputRef={this.inputRef}
-              handleChatSubmit={this.handleChatSubmit}
+              handleChatSubmit={(this.state.mafiaChatActive) ? this.handleChatSubmit : this.handleMafiaChatSubmit}
               isDisabled={(currentUser[0].role !== "mafia" && gamePhase.length>= 5 && gamePhase[2].activePhase) || !currentUser[0].alive ? (true) : (false)}
+              currentUser={currentUser}
+              toggleMafiaChat={this.toggleMafiaChat}
             />
             {(gamePhase.length >= 5 && !gamePhase[2].activePhase) ||
             this.props.currentUser[0].hasActed ||
@@ -190,7 +213,6 @@ class App extends Component {
                 investigate={this.investigate}
               />
             )}
-
             {gamePhase.length >= 5 &&
             gamePhase[4].activePhase &&
             !this.props.currentUser[0].hasActed &&
