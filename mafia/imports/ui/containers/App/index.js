@@ -30,7 +30,6 @@ class App extends Component {
   }
 
   handleChatSubmit = e => {
-    console.log('pickle')
     e.preventDefault();
     let inputRef = this.inputRef.current;
     let currentUser = this.props.currentUser[0];
@@ -44,7 +43,6 @@ class App extends Component {
     }
   };
   handleMafiaChatSubmit = e => {
-    console.log('hello')
     e.preventDefault();
     let inputRef = this.inputRef.current;
     let currentUser = this.props.currentUser[0];
@@ -61,7 +59,6 @@ class App extends Component {
     this.setState(prevState => ({
       mafiaChatActive: !prevState.mafiaChatActive
     }))
-    console.log(this.state.mafiaChatActive)
   }
 
   joinGame = () => {
@@ -153,10 +150,11 @@ class App extends Component {
     const {
       township,
       currentUserId,
+      messages,
       gamePhase,
       currentUser
     } = this.props;
-    console.log(this.mafiaChatActive)
+
     return (
       <Container>
         <Button color="red" onClick={this.reset} content="BOOM"/>
@@ -191,11 +189,12 @@ class App extends Component {
             <PlayerList township={township} />
             <Divider horizontal>Chat Area</Divider>
             <Chatbox
-              messages={this.filterMessages(this.props.currentUser[0].role)}
+              // messages={this.filterMessages(this.props.currentUser[0].role)}
+              messages={messages}
             />
             <ChatInput
               inputRef={this.inputRef}
-              handleChatSubmit={(this.state.mafiaChatActive) ? this.handleChatSubmit : this.handleMafiaChatSubmit}
+              handleChatSubmit={(this.state.mafiaChatActive) ? this.handleMafiaChatSubmit : this.handleChatSubmit}
               isDisabled={(currentUser[0].role !== "mafia" && gamePhase.length>= 5 && gamePhase[2].activePhase) || !currentUser[0].alive ? (true) : (false)}
               currentUser={currentUser}
               toggleMafiaChat={this.toggleMafiaChat}
@@ -236,7 +235,9 @@ export default withTracker(() => {
   Meteor.subscribe('currentPlayer');
   Meteor.subscribe('gamePhases');
   Meteor.subscribe('players');
-  Meteor.subscribe('messages')
+  Meteor.subscribe('messagesForEveryone')
+  Meteor.subscribe('messagesForRole')
+
   return {
     township: Mafia.find().fetch(),
     messages: Messages.find().fetch(),

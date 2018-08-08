@@ -14,8 +14,26 @@ if (Meteor.isServer){
   Meteor.publish('gamePhases', function gamePhasesPublication(){
     return GamePhase.find({})
   })
-  Meteor.publish('messages', function messagesPublication(){
-    return Messages.find({})
+  Meteor.publish('messagesForEveryone', function messagesPublication(){
+    return Messages.find({ recipient: "Everyone" })
+  })
+  Meteor.publish('messagesForRole', function messagesForRolePublication(){
+    const currentUser = Mafia.find({ player: Meteor.userId() }).fetch()
+
+    switch(currentUser[0].role) {
+      case "mafia": {
+        return Messages.find({recipient: "Mafia"})
+      }
+      case "detective": {
+        return Messages.find({recipient: "Detective"})
+      }
+      case "doctor": {
+        return Messages.find({recipient: "Doctor"})
+      }
+      default: {
+        return Messages.find({recipient: "Civilian"})
+      }
+    }
   })
 }
 
