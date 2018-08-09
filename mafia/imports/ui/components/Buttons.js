@@ -10,7 +10,7 @@ const Buttons = ({ township, currentUser, setTarget, setSaved, investigate }) =>
       message = "Choose a target";
       actions = township
         .filter(villager => villager.alive)
-        .map(villager => <Button basic color="teal" name={villager.name} onClick={() => setTarget(villager, currentUser)}>{villager.name}</Button>);
+        .map(villager => <Button key={villager.name} basic color="teal" name={villager.name} onClick={() => setTarget(villager, currentUser)}>{villager.name}</Button>);
       break;
     case "doctor":
       message = "Save someone!";
