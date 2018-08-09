@@ -31,7 +31,6 @@ Meteor.startup(() => {
       text: 'An unsettling energy stirs in the township.  There are rumours the mafia will visit an unlucky villager tonight.'
     })
   }
-
   if (GamePhase.find().count() === 0){
     GamePhase.insert(
       {
@@ -44,7 +43,6 @@ Meteor.startup(() => {
       title: 'Meet the township',
       activePhase: false
     })
-    
     GamePhase.insert({
       phase: 3,
       title: 'Night falls',
@@ -62,7 +60,6 @@ Meteor.startup(() => {
       activePhase: false,
       feedback: 0
     })
-
     GamePhase.insert({
       phase: 6,
       title: 'Victory',

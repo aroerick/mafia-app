@@ -1,13 +1,11 @@
 import { Mongo } from "meteor/mongo";
-import { GamePhase } from './gamePhase'
-import { Messages } from './messages'
 
 export const Mafia = new Mongo.Collection("mafia");
 
 if (Meteor.isServer){
   AccountsGuest.enabled = true;
   AccountsGuest.anonymous = true;
-  
+
   Meteor.publish('currentPlayer', function currentPlayerPublication(){
     return Mafia.find({player: Meteor.userId() })
   })

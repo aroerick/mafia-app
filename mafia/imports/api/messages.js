@@ -23,6 +23,10 @@ if (Meteor.isServer) {
       }
     }
   })
+  Meteor.publish("messagesForPlayer", function messagesForPlayerPublication() {
+    const currentUser = Mafia.find({ player: Meteor.userId() }).fetch()
+    return Messages.find({ recipient: currentUser[0].name})
+  })
 }
 Meteor.methods({
   "messages.handleChatSubmit"(message) {

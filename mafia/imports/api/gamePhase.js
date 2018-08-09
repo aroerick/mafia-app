@@ -13,12 +13,7 @@ Meteor.methods({
     Mafia.update(
       {},
       {
-        $set: {
-          alive: true,
-          votesForLynch: 0,
-          targeted: false,
-          saved: false
-        }
+        $set: { alive: true, votesForLynch: 0, targeted: false, saved: false }
       },
       { multi: true }
     );
@@ -71,9 +66,8 @@ Meteor.methods({
   "game.updateFeedback"() {
     let phase = GamePhase.find({ phase: 3 }).fetch();
     let feedback = parseInt(phase[0].feedback);
-    feedback++;
+    ++feedback;
     GamePhase.update({ phase: 3 }, { $set: { feedback: feedback } });
-
     //IF WE HAVE RECEIVED ENOUGH FEEDBACK...THEN FIGURE OUT WHOS DYING OR NAH - ONLY IF... I THINK.
     if (
       Mafia.find({
@@ -89,7 +83,6 @@ Meteor.methods({
         text:
           "The hustle and bustle of the night has died down.  The dawn is nigh.  On the morning of the new day, a meeting is to be held with the township."
       });
-
       Meteor.setTimeout(function() {
         // Mafia split their vote - nobody dies.  Targeted and saved are reset.
         if (Mafia.find({ targeted: true }).count() > 1) {
@@ -101,29 +94,13 @@ Meteor.methods({
           });
           Mafia.update(
             { targeted: true },
-            {
-              $set: {
-                targeted: false
-              }
-            },
+            { $set: { targeted: false } },
             { multi: true }
           );
-
-          Mafia.update(
-            { saved: true },
-            {
-              $set: {
-                saved: false
-              }
-            }
-          );
+          Mafia.update({ saved: true }, { $set: { saved: false } });
           Mafia.update(
             { hasActed: true },
-            {
-              $set: {
-                hasActed: false
-              }
-            },
+            { $set: { hasActed: false } },
             { multi: true }
           );
         }
@@ -147,32 +124,13 @@ Meteor.methods({
                   saved[0].name
                 } hosted a party at their place last night... the doctor was there... the mafia was there... nobody was up to any funny business`
               });
-              Mafia.update(
-                { targeted: true },
-                {
-                  $set: {
-                    targeted: false
-                  }
-                }
-              );
-              Mafia.update(
-                { saved: true },
-                {
-                  $set: {
-                    saved: false
-                  }
-                }
-              );
+              Mafia.update({ targeted: true }, { $set: { targeted: false } });
+              Mafia.update({ saved: true }, { $set: { saved: false } });
               Mafia.update(
                 { hasActed: true },
-                {
-                  $set: {
-                    hasActed: false
-                  }
-                },
+                { $set: { hasActed: false } },
                 { multi: true }
               );
-
               // Mafia and doctor visited different people.  The villager visited by the mafia has died.
             } else if (
               Mafia.find({ targeted: true }).fetch() !==
@@ -191,28 +149,12 @@ Meteor.methods({
               });
               Mafia.update(
                 { targeted: true },
-                {
-                  $set: {
-                    alive: false,
-                    targeted: false
-                  }
-                }
+                { $set: { alive: false, targeted: false } }
               );
-              Mafia.update(
-                { saved: true },
-                {
-                  $set: {
-                    saved: false
-                  }
-                }
-              );
+              Mafia.update({ saved: true }, { $set: { saved: false } });
               Mafia.update(
                 { hasActed: true },
-                {
-                  $set: {
-                    hasActed: false
-                  }
-                },
+                { $set: { hasActed: false } },
                 { multi: true }
               );
             }
@@ -231,28 +173,12 @@ Meteor.methods({
             });
             Mafia.update(
               { targeted: true },
-              {
-                $set: {
-                  alive: false,
-                  targeted: false
-                }
-              }
+              { $set: { alive: false, targeted: false } }
             );
-            Mafia.update(
-              { saved: true },
-              {
-                $set: {
-                  saved: false
-                }
-              }
-            );
+            Mafia.update({ saved: true }, { $set: { saved: false } });
             Mafia.update(
               { hasActed: true },
-              {
-                $set: {
-                  hasActed: false
-                }
-              },
+              { $set: { hasActed: false } },
               { multi: true }
             );
           }
@@ -274,7 +200,6 @@ Meteor.methods({
             recipient: "Everyone",
             text: `Good job township.  Y'all have successfully saved yourselves from the mafia.  No mafia remain.`
           });
-
           //MAFIA WIN
         } else if (
           Mafia.find({ $and: [{ role: "mafia" }, { alive: true }] }).count() >=
@@ -286,7 +211,6 @@ Meteor.methods({
           }).count() < 2
         ) {
           GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
-
           GamePhase.update(
             { phase: 6 },
             { $set: { activePhase: true, winner: "mafia" } }
@@ -311,7 +235,6 @@ Meteor.methods({
       }, 10000);
     }
   },
-
   "game.updateDaytimeFeedback"() {
     let phase = GamePhase.find({ phase: 5 }).fetch();
     let feedback = parseInt(phase[0].feedback);
@@ -332,25 +255,12 @@ Meteor.methods({
           } has been lynched`
         });
         Mafia.update({ name: lynchedPlayer.name }, { $set: { alive: false } });
-
         Mafia.update(
           { hasActed: true },
-          {
-            $set: {
-              hasActed: false
-            }
-          },
+          { $set: { hasActed: false } },
           { multi: true }
         );
-        Mafia.update(
-          {},
-          {
-            $set: {
-              votesForLynch: 0
-            }
-          },
-          { multi: true }
-        );
+        Mafia.update({}, { $set: { votesForLynch: 0 } }, { multi: true });
       } //TODO - deal with situation where 2 people have split votes
       else {
         Messages.insert({
@@ -358,27 +268,13 @@ Meteor.methods({
           recipient: "Everyone",
           text: `There was too much indecision.  Nobody was lynched.  Another night shall fall.  The mafia are still amongst us.`
         });
-
         Mafia.update(
           { hasActed: true },
-          {
-            $set: {
-              hasActed: false
-            }
-          },
+          { $set: { hasActed: false } },
           { multi: true }
         );
-        Mafia.update(
-          {},
-          {
-            $set: {
-              votesForLynch: 0
-            }
-          },
-          { multi: true }
-        );
+        Mafia.update({}, { $set: { votesForLynch: 0 } }, { multi: true });
       }
-
       //check for wins
       if (
         Mafia.find({ $and: [{ role: "mafia" }, { alive: true }] }).count() === 0
