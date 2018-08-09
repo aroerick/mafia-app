@@ -11,14 +11,25 @@ import Chatbox from "../../ui/components/Chatbox";
 import ChatInput from "../../ui/components/ChatInput";
 import Buttons from "../../ui/components/Buttons";
 import DayButtons from "../../ui/components/DayButtons";
-import { Button, Divider, Header, Container, Form } from "semantic-ui-react";
+import {
+  Button,
+  Divider,
+  Header,
+  Container,
+  Form,
+  Message
+} from "semantic-ui-react";
 
 class Game extends Component {
   constructor(props) {
     super(props);
     this.inputRef = React.createRef();
     this.playerName = React.createRef();
-    this.state = { mafiaChatActive: false };
+    this.state = {
+      mafiaChatActive: false,
+      joinGameError: false,
+      joinError: ""
+    };
   }
   reset = () => {
     Meteor.call("game.resetAll");
@@ -64,11 +75,13 @@ class Game extends Component {
   joinGame = () => {
     let playerName = this.playerName.current;
     if (playerName.value > 1) return;
-    Meteor.call("player.createNew", playerName.value);
-    this.startGame();
+    Meteor.call("player.createNew", playerName.value, (error, result) => {
+      this.setState(result);
+      this.startGame();
+    });
   };
   startGame = () => {
-    if (this.props.township.length === 5) {
+    if (this.props.township.length === 6) {
       Meteor.call("game.nextPhase");
     }
   };
@@ -152,7 +165,7 @@ class Game extends Component {
           Join the Township. Current population: {this.props.township.length}/6
         </Header>
         {Mafia.find({ player: currentUserId }).count() === 0 ? (
-          <Form>
+          <Form error={this.state.joinGameError}>
             <Form.Field>
               <input
                 type="text"
@@ -164,6 +177,12 @@ class Game extends Component {
                   }
                 }}
               />
+
+              <Message
+                error
+                header="Error in Joining"
+                content={this.state.joinError}
+              />
             </Form.Field>
           </Form>
         ) : (
@@ -174,9 +193,7 @@ class Game extends Component {
             </Header>
             <PlayerList township={township} />
             <Divider horizontal>Chat Area</Divider>
-            <Chatbox
-              messages={messages}
-            />
+            <Chatbox messages={messages} />
             <ChatInput
               inputRef={this.inputRef}
               handleChatSubmit={

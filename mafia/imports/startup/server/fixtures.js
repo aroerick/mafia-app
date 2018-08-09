@@ -9,18 +9,22 @@ Meteor.startup(() => {
       name: "Testing Tina",
       role: "civilian",
       alive: false,
-      votesForLynch: 0
+      votesForLynch: 0,
+      livingPlayer: false
     });
     Mafia.insert({
       name: "Testing Timothy",
       role: "civilian",
       alive: true,
-      votesForLynch: 0
+      votesForLynch: 0,
+      livingPlayer: false
     });
     // Mafia.insert({
     //   name: 'Testing Tabitha',
     //   role: 'mafia',
-    //   alive: true
+    //   alive: true,
+    //   livingPlayer: false
+
     // })
   }
 

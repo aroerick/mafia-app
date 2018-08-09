@@ -33,17 +33,24 @@ const shuffler = arr => {
 Meteor.methods({
   "player.createNew"(name) {
     if (Mafia.find().count() < 6) {
-      Mafia.insert({
-        name,
-        role: roleArr[0],
-        alive: true,
-        player: Meteor.userId(),
-        votesForLynch: 0,
-        livingPlayer: true //checks that player is not a bot
-      });
-      roleArr.shift();
+      if (Mafia.find({ name: name }).count() > 0) {
+        return {
+          joinGameError: true,
+          joinError: "This name has already been used"
+        };
+      } else {
+        Mafia.insert({
+          name,
+          role: roleArr[0],
+          alive: true,
+          player: Meteor.userId(),
+          votesForLynch: 0,
+          livingPlayer: true //checks that player is not a bot
+        });
+        roleArr.shift();
+      }
     } else {
-      console.log("Lobby full");
+      return { joinGameError: true, joinError: "Lobby full" };
     }
   },
   "player.setTarget"(villager) {
