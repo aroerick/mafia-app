@@ -13,11 +13,11 @@ import Buttons from "../../ui/components/Buttons";
 import DayButtons from "../../ui/components/DayButtons";
 import {
   Button,
-  Divider,
   Header,
   Container,
   Form,
-  Accordion
+	Accordion,
+	Message
 } from "semantic-ui-react";
 
 class Game extends Component {
@@ -27,7 +27,9 @@ class Game extends Component {
     this.playerName = React.createRef();
     this.state = { 
 			mafiaChatActive: false,
-			activeIndex: 0
+			activeIndex: 0,
+			joinGameError: false,
+      joinError: ""
 		};
   }
   reset = () => {
@@ -74,11 +76,13 @@ class Game extends Component {
   joinGame = () => {
     let playerName = this.playerName.current;
     if (playerName.value > 1) return;
-    Meteor.call("player.createNew", playerName.value);
-    this.startGame();
+    Meteor.call("player.createNew", playerName.value, (error, result) => {
+      this.setState(result);
+      this.startGame();
+    });
   };
   startGame = () => {
-    if (this.props.township.length === 5) {
+    if (this.props.township.length === 6) {
       Meteor.call("game.nextPhase");
     }
   };
@@ -170,7 +174,7 @@ class Game extends Component {
           Join the Township. Current population: {this.props.township.length}/6
         </Header>
         {Mafia.find({ player: currentUserId }).count() === 0 ? (
-          <Form>
+          <Form error={this.state.joinGameError}>
             <Form.Field>
               <input
                 type="text"
@@ -181,6 +185,12 @@ class Game extends Component {
                     this.joinGame();
                   }
                 }}
+              />
+
+              <Message
+                error
+                header="Error in Joining"
+                content={this.state.joinError}
               />
             </Form.Field>
           </Form>

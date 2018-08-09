@@ -77,7 +77,7 @@ Meteor.methods({
       Mafia.insert(newPlayer);
       roleArr.shift();
     } else {
-      console.log("Lobby full");
+      return { joinGameError: true, joinError: "Lobby full" };
     }
   },
   "player.setTarget"(villager) {

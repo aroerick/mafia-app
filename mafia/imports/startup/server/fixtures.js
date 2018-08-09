@@ -22,7 +22,9 @@ Meteor.startup(() => {
     // Mafia.insert({
     //   name: 'Testing Tabitha',
     //   role: 'mafia',
-    //   alive: true
+    //   alive: true,
+    //   livingPlayer: false
+
     // })
   }
 
