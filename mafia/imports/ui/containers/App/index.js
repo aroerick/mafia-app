@@ -1,5 +1,7 @@
 import React, { Component } from "react";
-import { Mafia, Messages, GamePhase } from "../../../api/mafia";
+import { Mafia } from "../../../api/mafia";
+import { Messages } from "../../../api/messages"
+import { GamePhase } from "../../../api/gamePhase"
 import { withTracker } from "meteor/react-meteor-data";
 import { BrowserRouter as Router } from "react-router-dom";
 import Routes from "../../../routes";
