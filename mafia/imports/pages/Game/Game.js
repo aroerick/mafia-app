@@ -6,6 +6,7 @@ import { Mafia } from "../../api/mafia";
 import { Messages } from "../../api/messages";
 import { GamePhase } from "../../api/gamePhase";
 import PlayerList from "../../ui/components/PlayerList";
+import PlayerCard from "../../ui/components/PlayerCard";
 import Chatbox from "../../ui/components/Chatbox";
 import ChatInput from "../../ui/components/ChatInput";
 import Buttons from "../../ui/components/Buttons";
@@ -176,9 +177,7 @@ class Game extends Component {
             <div>
               <Header as="h3">Welcome to the game</Header>
               <Header as="h2" dividing>
-                {" "}
-                Hello {this.props.currentUser[0].name}, you have been assigned the
-                role of: {this.props.currentUser[0].role}{" "}
+                <PlayerCard currentUser={currentUser} />
               </Header>
               <PlayerList township={township} />
               <Divider horizontal>Chat Area</Divider>
