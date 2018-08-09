@@ -93,7 +93,7 @@ class Game extends Component {
     Meteor.call("game.updateFeedback");
   };
   investigate = (villager, currentUser) => {
-    Meteor.call("player.checkMafia", villager._id, (error, result) => {
+    Meteor.call("player.checkMafia", villager, (error, result) => {
       result[0].role === "mafia"
         ? Meteor.call("messages.handleChatSubmit", {
             sender: "Narrator",
