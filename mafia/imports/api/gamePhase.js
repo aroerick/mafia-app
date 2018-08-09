@@ -1,14 +1,17 @@
-import { Mongo } from "meteor/mongo";
-import { Mafia } from "./mafia";
-import { Messages } from "./messages";
+import { Mongo } from 'meteor/mongo';
+import { Mafia } from './mafia';
+import { Messages } from './messages';
+
+export const GamePhase = new Mongo.Collection('gamePhase');
+
 
 if (Meteor.isServer) {
-  Meteor.publish("gamePhases", function gamePhasesPublication() {
+  Meteor.publish('gamePhases', function gamePhasesPublication() {
     return GamePhase.find({});
   });
 }
 Meteor.methods({
-  "game.resetAll"() {
+  'game.resetAll'() {
     Mafia.remove({ livingPlayer: true });
     Mafia.update(
       {},
@@ -17,10 +20,10 @@ Meteor.methods({
           alive: true,
           votesForLynch: 0,
           targeted: false,
-          saved: false
-        }
+          saved: false,
+        },
       },
-      { multi: true }
+      { multi: true },
     );
     Messages.remove({});
     GamePhase.update(
@@ -30,45 +33,45 @@ Meteor.methods({
     );
     GamePhase.update({ phase: 1 }, { $set: { activePhase: true } });
     GamePhase.update({}, { $set: { feedback: 0 } }, { multi: true });
-    roleArr = ["mafia", "doctor", "detective", "mafia", "civilian", "civilian"];
+    roleArr = ['mafia', 'doctor', 'detective', 'mafia', 'civilian', 'civilian'];
     // let shuffledRoles = shuffler(roleArr)
   },
-  "game.nextPhase"() {
+  'game.nextPhase'() {
     GamePhase.update({ phase: 1 }, { $set: { activePhase: false } });
     GamePhase.update({ phase: 2 }, { $set: { activePhase: true } });
     Messages.insert({
-      sender: "Narrator",
-      recipient: "Everyone",
-      text: "Become acquainted.  Do you have enemies or victims?"
+      sender: 'Narrator',
+      recipient: 'Everyone',
+      text: 'Become acquainted.  Do you have enemies or victims?'
     }),
       Meteor.setTimeout(function() {
         GamePhase.update({ phase: 2 }, { $set: { activePhase: false } }),
           GamePhase.update({ phase: 3 }, { $set: { activePhase: true } }),
           Messages.insert({
-            sender: "Narrator",
-            recipient: "Everyone",
+            sender: 'Narrator',
+            recipient: 'Everyone',
             text:
-              "The moon has risen.  As the civilians of this township lay their heads to sleep, the doctor, the detective, and the mafia are awakening to finish their tasks"
+              'The moon has risen.  As the civilians of this township lay their heads to sleep, the doctor, the detective, and the mafia are awakening to finish their tasks'
           }),
           Messages.insert({
-            sender: "Narrator",
-            recipient: "Mafia",
-            text: "Somebody gave you a wicked side eye.  Who was it?"
+            sender: 'Narrator',
+            recipient: 'Mafia',
+            text: 'Somebody gave you a wicked side eye.  Who was it?'
           }),
           Messages.insert({
-            sender: "Narrator",
-            recipient: "Doctor",
+            sender: 'Narrator',
+            recipient: 'Doctor',
             text:
-              "It appears a bug is spreading through the town.  Who shall we check on tonight?"
+              'It appears a bug is spreading through the town.  Who shall we check on tonight?'
           }),
           Messages.insert({
-            sender: "Narrator",
-            recipient: "Detective",
-            text: "Somebodys up to no good.  Is it possibly ________?"
+            sender: 'Narrator',
+            recipient: 'Detective',
+            text: 'Somebodys up to no good.  Is it possibly ________?'
           });
       }, 10000);
   },
-  "game.updateFeedback"() {
+  'game.updateFeedback'() {
     let phase = GamePhase.find({ phase: 3 }).fetch();
     let feedback = parseInt(phase[0].feedback);
     feedback++;
@@ -77,27 +80,27 @@ Meteor.methods({
     //IF WE HAVE RECEIVED ENOUGH FEEDBACK...THEN FIGURE OUT WHOS DYING OR NAH - ONLY IF... I THINK.
     if (
       Mafia.find({
-        $and: [{ alive: true }, { role: { $not: { $eq: "civilian" } } }]
+        $and: [{ alive: true }, { role: { $not: { $eq: 'civilian' } } }]
       }).count() === feedback
     ) {
       GamePhase.update({ phase: 3 }, { $set: { activePhase: false } });
       GamePhase.update({ phase: 4 }, { $set: { activePhase: true } });
 
       Messages.insert({
-        sender: "Narrator",
-        recipient: "Everyone",
+        sender: 'Narrator',
+        recipient: 'Everyone',
         text:
-          "The hustle and bustle of the night has died down.  The dawn is nigh.  On the morning of the new day, a meeting is to be held with the township."
+          'The hustle and bustle of the night has died down.  The dawn is nigh.  On the morning of the new day, a meeting is to be held with the township.'
       });
 
       Meteor.setTimeout(function() {
         // Mafia split their vote - nobody dies.  Targeted and saved are reset.
         if (Mafia.find({ targeted: true }).count() > 1) {
           Messages.insert({
-            sender: "Narrator",
-            recipient: "Everyone",
+            sender: 'Narrator',
+            recipient: 'Everyone',
             text:
-              "Lucky for this township, it appears the mafia don't have their act together.  Nobody has died tonight."
+              `Lucky for this township, it appears the mafia don't have their act together.  Nobody has died tonight.`
           });
           Mafia.update(
             { targeted: true },
@@ -132,7 +135,7 @@ Meteor.methods({
           //IF THE DOCTOR IS ALIVE - THEN CHECK SAVED.
           if (
             Mafia.find({
-              $and: [{ role: "doctor" }, { alive: true }]
+              $and: [{ role: 'doctor' }, { alive: true }]
             }).count() === 1
           ) {
             let targeted = Mafia.find({ targeted: true }).fetch();
@@ -141,8 +144,8 @@ Meteor.methods({
               let villager = Mafia.find({ targeted: true }).fetch();
 
               Messages.insert({
-                sender: "Narrator",
-                recipient: "Everyone",
+                sender: 'Narrator',
+                recipient: 'Everyone',
                 text: `${
                   saved[0].name
                 } hosted a party at their place last night... the doctor was there... the mafia was there... nobody was up to any funny business`
@@ -181,8 +184,8 @@ Meteor.methods({
               let targeted = Mafia.find({ targeted: true }).fetch();
 
               Messages.insert({
-                sender: "Narrator",
-                recipient: "Everyone",
+                sender: 'Narrator',
+                recipient: 'Everyone',
                 text: `We noticed ${
                   targeted[0].name
                 } didnt show up to the morning meeting.  There's no trace of them to be found and their home is a wrangled disaster.  What poor misfortune befell our poor ${
@@ -221,8 +224,8 @@ Meteor.methods({
             let targeted = Mafia.find({ targeted: true }).fetch();
 
             Messages.insert({
-              sender: "Narrator",
-              recipient: "Everyone",
+              sender: 'Narrator',
+              recipient: 'Everyone',
               text: `We noticed ${
                 targeted[0].name
               } didnt show up to the morning meeting.  There's no trace of them to be found and their home is a wrangled disaster.  What poor misfortune befell our poor ${
@@ -260,24 +263,24 @@ Meteor.methods({
         //ALL PEOPLE DEAD OR ALIVE NOW. DID ANYONE WIN?
         //VILLAGER WIN
         if (
-          Mafia.find({ $and: [{ role: "mafia" }, { alive: true }] }).count() ===
+          Mafia.find({ $and: [{ role: 'mafia' }, { alive: true }] }).count() ===
           0
         ) {
           GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
 
           GamePhase.update(
             { phase: 6 },
-            { $set: { activePhase: true, winner: "villagers" } }
+            { $set: { activePhase: true, winner: 'villagers' } }
           );
           Messages.insert({
-            sender: "Narrator",
-            recipient: "Everyone",
+            sender: 'Narrator',
+            recipient: 'Everyone',
             text: `Good job township.  Y'all have successfully saved yourselves from the mafia.  No mafia remain.`
           });
 
           //MAFIA WIN
         } else if (
-          Mafia.find({ $and: [{ role: "mafia" }, { alive: true }] }).count() >=
+          Mafia.find({ $and: [{ role: 'mafia' }, { alive: true }] }).count() >=
             Mafia.find({
               $and: [{ role: { $not: /mafia/ } }, { alive: true }]
             }).count() &&
@@ -289,11 +292,11 @@ Meteor.methods({
 
           GamePhase.update(
             { phase: 6 },
-            { $set: { activePhase: true, winner: "mafia" } }
+            { $set: { activePhase: true, winner: 'mafia' } }
           );
           Messages.insert({
-            sender: "Narrator",
-            recipient: "Everyone",
+            sender: 'Narrator',
+            recipient: 'Everyone',
             text: `Good job mafia.  You own this town.  Mafia outnumber the villagers.`
           });
           //IF NOBODY WINS. PROOCED BACK TO PHASE 5 - DAY LYNCHING
@@ -303,8 +306,8 @@ Meteor.methods({
           GamePhase.update({ phase: 5 }, { $set: { activePhase: true } });
 
           Messages.insert({
-            sender: "Narrator",
-            recipient: "Everyone",
+            sender: 'Narrator',
+            recipient: 'Everyone',
             text: `The town still feels strange.  Somebody is here who's looking to start trouble.  Perhaps we should get rid of them?  What say the town people?`
           });
         }
@@ -312,7 +315,7 @@ Meteor.methods({
     }
   },
 
-  "game.updateDaytimeFeedback"() {
+  'game.updateDaytimeFeedback'() {
     let phase = GamePhase.find({ phase: 5 }).fetch();
     let feedback = parseInt(phase[0].feedback);
     feedback++;
@@ -325,8 +328,8 @@ Meteor.methods({
       let lynchedPlayer = Mafia.findOne({}, { sort: { votesForLynch: -1 } });
       if (lynchedPlayer.votesForLynch > feedback / 2) {
         Messages.insert({
-          sender: "Narrator",
-          recipient: "Everyone",
+          sender: 'Narrator',
+          recipient: 'Everyone',
           text: `For the good of the town, ${
             lynchedPlayer.name
           } has been lynched`
@@ -354,8 +357,8 @@ Meteor.methods({
       } //TODO - deal with situation where 2 people have split votes
       else {
         Messages.insert({
-          sender: "Narrator",
-          recipient: "Everyone",
+          sender: 'Narrator',
+          recipient: 'Everyone',
           text: `There was too much indecision.  Nobody was lynched.  Another night shall fall.  The mafia are still amongst us.`
         });
 
@@ -381,18 +384,18 @@ Meteor.methods({
 
       //check for wins
       if (
-        Mafia.find({ $and: [{ role: "mafia" }, { alive: true }] }).count() === 0
+        Mafia.find({ $and: [{ role: 'mafia' }, { alive: true }] }).count() === 0
       ) {
         GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
 
         GamePhase.update({ phase: 6 }, { $set: { activePhase: true } });
         Messages.insert({
-          sender: "Narrator",
-          recipient: "Everyone",
+          sender: 'Narrator',
+          recipient: 'Everyone',
           text: `Good job township.  Y'all have successfully saved yourselves from the mafia.  No mafia remain.`
         });
       } else if (
-        Mafia.find({ $and: [{ role: "mafia" }, { alive: true }] }).count() >=
+        Mafia.find({ $and: [{ role: 'mafia' }, { alive: true }] }).count() >=
           Mafia.find({
             $and: [{ role: { $not: /mafia/ } }, { alive: true }]
           }).count() &&
@@ -404,8 +407,8 @@ Meteor.methods({
         GamePhase.update({ phase: 6 }, { $set: { activePhase: true } });
 
         Messages.insert({
-          sender: "Narrator",
-          recipient: "Everyone",
+          sender: 'Narrator',
+          recipient: 'Everyone',
           text: `Good job mafia.  You own this town.  Mafia outnumber the villagers.`
         });
         //CHECK FOR THE WIN.  IF NO WIN. PROCEED TO RUN DAY TIME STUFF
@@ -414,30 +417,29 @@ Meteor.methods({
         GamePhase.update({ phase: 5 }, { $set: { activePhase: false } }),
           GamePhase.update({ phase: 3 }, { $set: { activePhase: true } }),
           Messages.insert({
-            sender: "Narrator",
-            recipient: "Everyone",
+            sender: 'Narrator',
+            recipient: 'Everyone',
             text:
-              "The moon has risen.  As the civilians of this township lay their heads to sleep, the doctor, the detective, and the mafia are awakening to finish their tasks"
+              'The moon has risen.  As the civilians of this township lay their heads to sleep, the doctor, the detective, and the mafia are awakening to finish their tasks'
           }),
           Messages.insert({
-            sender: "Narrator",
-            recipient: "Mafia",
+          sender: 'Narrator',
+            recipient: 'Mafia',
             text:
-              "I can't believe the township are out to get us.  Maybe we should show them whos boss."
+              `I can't believe the township are out to get us.  Maybe we should show them whos boss.`
           }),
           Messages.insert({
-            sender: "Narrator",
-            recipient: "Doctor",
+            sender: 'Narrator',
+            recipient: 'Doctor',
             text:
-              "Heard somebody coughing in the night.  Pick someone to visit."
+              'Heard somebody coughing in the night.  Pick someone to visit.'
           }),
           Messages.insert({
-            sender: "Narrator",
-            recipient: "Detective",
-            text: "Something fishy is going on.  Who seems suspicious?"
+            sender: 'Narrator',
+            recipient: 'Detective',
+            text: 'Something fishy is going on.  Who seems suspicious?'
           });
       }
     }
   }
 });
-export const GamePhase = new Mongo.Collection("gamePhase");
