@@ -2,24 +2,23 @@ import React, { Component } from "react";
 import "./styles.css";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
-import { Mafia } from "../../api/mafia";
-import { Messages } from "../../api/messages";
-import { GamePhase } from "../../api/gamePhase";
-import PlayerList from "../../ui/components/PlayerList";
-import PlayerCard from "../../ui/components/PlayerCard";
-import Chatbox from "../../ui/components/Chatbox";
-import ChatInput from "../../ui/components/ChatInput";
-import Buttons from "../../ui/components/Buttons";
-import DayButtons from "../../ui/components/DayButtons";
+import { Mafia } from "../../../api/mafia";
+import { Messages } from "../../../api/mafia";
+import { GamePhase } from "../../../api/mafia";
+import PlayerList from "./../../components/PlayerList";
+import Chatbox from "./../../components/Chatbox";
+import ChatInput from "./../../components/ChatInput";
+import Buttons from "./../../components/Buttons";
+import DayButtons from "./../../components/DayButtons";
 import { Button, Divider, Header, Container, Form } from "semantic-ui-react";
 
-class Game extends Component {
+class Victory extends Component {
   constructor(props) {
     super(props);
     this.inputRef = React.createRef();
     this.playerName = React.createRef();
-    this.state = { mafiaChatActive: false };
   }
+
   reset = () => {
     Meteor.call("game.resetAll");
     Meteor.call("messages.handleChatSubmit", {
@@ -28,8 +27,8 @@ class Game extends Component {
       text:
         "An unsettling energy stirs in the township.  There are rumours the mafia will visit an unlucky villager tonight."
     });
-    this.setState({ mafiaChatActive: false });
   };
+
   handleChatSubmit = e => {
     e.preventDefault();
     let inputRef = this.inputRef.current;
@@ -38,35 +37,20 @@ class Game extends Component {
       Meteor.call("messages.handleChatSubmit", {
         text: inputRef.value,
         sender: currentUser.name,
-        recipient: "Everyone"
+        recipient: "Everyone",
+        role: currentUser.role
       });
       this.inputRef.current.value = "";
     }
   };
-  handleMafiaChatSubmit = e => {
-    e.preventDefault();
-    let inputRef = this.inputRef.current;
-    let currentUser = this.props.currentUser[0];
-    if (inputRef.value) {
-      Meteor.call("messages.handleChatSubmit", {
-        text: inputRef.value,
-        sender: currentUser.name,
-        recipient: "Mafia"
-      });
-      this.inputRef.current.value = "";
-    }
-  };
-  toggleMafiaChat = () => {
-    this.setState(prevState => ({
-      mafiaChatActive: !prevState.mafiaChatActive
-    }));
-  };
+
   joinGame = () => {
     let playerName = this.playerName.current;
     if (playerName.value > 1) return;
     Meteor.call("player.createNew", playerName.value);
     this.startGame();
   };
+
   startGame = () => {
     if (this.props.township.length === 5) {
       Meteor.call("game.nextPhase");
@@ -93,8 +77,10 @@ class Game extends Component {
     Meteor.call("game.updateFeedback");
   };
   investigate = (villager, currentUser) => {
-    Meteor.call("player.checkMafia", villager._id, (error, result) => {
-      result[0].role === "mafia"
+    const inv = Mafia.find({ _id: villager._id }).fetch();
+    const check = inv[0].role === "mafia" ? true : false;
+    {
+      check
         ? Meteor.call("messages.handleChatSubmit", {
             sender: "Narrator",
             recipient: "Detective",
@@ -105,13 +91,14 @@ class Game extends Component {
             recipient: "Detective",
             text: `You have no reason to suspect ${villager.name}`
           });
-    });
+    }
     Meteor.call("player.hasActed", currentUser);
     Meteor.call("game.updateFeedback");
   };
+
   setLynchTarget = (villager, currentUser) => {
     if (villager === "") {
-      // Meteor.call("player.hasActed", currentUser);
+      Meteor.call("player.hasActed", currentUser);
       Meteor.call("game.updateDaytimeFeedback");
     } else {
       Meteor.call("player.setLynchTarget", villager);
@@ -120,10 +107,15 @@ class Game extends Component {
         recipient: currentUser[0].name,
         text: `You've targeted ${villager.name} for lynching`
       });
+      Meteor.call("player.hasActed", currentUser);
       Meteor.call("game.updateDaytimeFeedback");
     }
-    Meteor.call("player.hasActed", currentUser);
   };
+
+  handleSelect = button => {
+    console.log(button);
+  };
+
   filterMessages = role => {
     if (role != "mafia") {
       let filteredMessages = this.props.messages.filter(
@@ -137,17 +129,14 @@ class Game extends Component {
   };
 
   render() {
-    const {
-      township,
-      currentUserId,
-      messages,
-      gamePhase,
-      currentUser
-    } = this.props;
+    const { township, currentUserId, gamePhase, currentUser } = this.props;
 
-    return (
+    return this.props.currentUser ? (
       <Container>
         <Button color="red" onClick={this.reset} content="BOOM" />
+        <Header as="h1" block>
+          VICTORY PAGE
+        </Header>
         <Header as="h1" block>
           Join the Township. Current population: {this.props.township.length}/6
         </Header>
@@ -155,6 +144,8 @@ class Game extends Component {
           <Form>
             <Form.Field>
               <input
+                icon="users"
+                iconPosition="left"
                 type="text"
                 placeholder="What's your name?"
                 ref={this.playerName}
@@ -170,20 +161,18 @@ class Game extends Component {
           <div>
             <Header as="h3">Welcome to the game</Header>
             <Header as="h2" dividing>
-              <PlayerCard currentUser={currentUser} />
+              {" "}
+              Hello {this.props.currentUser[0].name}, you have been assigned the
+              role of: {this.props.currentUser[0].role}{" "}
             </Header>
             <PlayerList township={township} />
             <Divider horizontal>Chat Area</Divider>
             <Chatbox
-              messages={messages}
+              messages={this.filterMessages(this.props.currentUser[0].role)}
             />
             <ChatInput
               inputRef={this.inputRef}
-              handleChatSubmit={
-                this.state.mafiaChatActive
-                  ? this.handleMafiaChatSubmit
-                  : this.handleChatSubmit
-              }
+              handleChatSubmit={this.handleChatSubmit}
               isDisabled={
                 (currentUser[0].role !== "mafia" &&
                   gamePhase.length >= 5 &&
@@ -192,8 +181,6 @@ class Game extends Component {
                   ? true
                   : false
               }
-              currentUser={currentUser}
-              toggleMafiaChat={this.toggleMafiaChat}
             />
             {(gamePhase.length >= 5 && !gamePhase[2].activePhase) ||
             this.props.currentUser[0].hasActed ||
@@ -208,6 +195,7 @@ class Game extends Component {
                 investigate={this.investigate}
               />
             )}
+
             {gamePhase.length >= 5 &&
             gamePhase[4].activePhase &&
             !this.props.currentUser[0].hasActed &&
@@ -223,17 +211,17 @@ class Game extends Component {
           </div>
         )}
       </Container>
+    ) : (
+      ""
     );
   }
 }
+
 export default withTracker(() => {
   Meteor.subscribe("currentPlayer");
   Meteor.subscribe("gamePhases");
   Meteor.subscribe("players");
-  Meteor.subscribe("messagesForEveryone");
-  Meteor.subscribe("messagesForRole");
-  Meteor.subscribe("messagesForPlayer");
-
+  Meteor.subscribe("messages");
   return {
     township: Mafia.find().fetch(),
     messages: Messages.find().fetch(),
@@ -241,4 +229,4 @@ export default withTracker(() => {
     currentUser: Mafia.find({ player: Meteor.userId() }).fetch(),
     gamePhase: GamePhase.find().fetch()
   };
-})(Game);
+})(Victory);
