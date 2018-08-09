@@ -4,53 +4,46 @@ export const Mafia = new Mongo.Collection("mafia");
 export const GamePhase = new Mongo.Collection("gamePhase");
 export const Messages = new Mongo.Collection("messages");
 
-if (Meteor.isServer){
-  Meteor.publish('currentPlayer', function currentPlayerPublication(){
-    return Mafia.find({player: Meteor.userId() })
-  })
-  Meteor.publish('players', function playersPublication(){
-    return Mafia.find({})
-    // ,{fields: {role: 1, votesForLynch:0} }
-  })
-  Meteor.publish('gamePhases', function gamePhasesPublication(){
-    return GamePhase.find({})
-  })
-  Meteor.publish('messagesForEveryone', function messagesPublication(){
-    return Messages.find({ recipient: "Everyone" })
-  })
-  Meteor.publish('messagesForRole', function messagesForRolePublication(){
-    const currentUser = Mafia.find({ player: Meteor.userId() }).fetch()
-    console.log(currentUser)
+if (Meteor.isServer) {
+  Meteor.publish("currentPlayer", function currentPlayerPublication() {
+    return Mafia.find({ player: Meteor.userId() });
+  });
+  Meteor.publish("players", function playersPublication() {
+    return Mafia.find({}, { fields: { role: 0 } });
+  });
+  Meteor.publish("gamePhases", function gamePhasesPublication() {
+    return GamePhase.find({});
+  });
+  Meteor.publish("messagesForEveryone", function messagesPublication() {
+    return Messages.find({ recipient: "Everyone" });
+  });
+  Meteor.publish("messagesForRole", function messagesForRolePublication() {
+    const currentUser = Mafia.find({ player: Meteor.userId() }).fetch();
 
-    switch(currentUser[0].role) {
+    switch (currentUser[0].role) {
       case "mafia": {
-        return Messages.find({recipient: "Mafia"})
+        return Messages.find({ recipient: "Mafia" });
       }
       case "detective": {
-        return Messages.find({recipient: "Detective"})
+        return Messages.find({ recipient: "Detective" });
       }
       case "doctor": {
-        return Messages.find({recipient: "Doctor"})
+        return Messages.find({ recipient: "Doctor" });
       }
       default: {
-        return Messages.find({recipient: "Civilian"})
+        return Messages.find({ recipient: "Civilian" });
       }
     }
-  })
+  });
 }
 
-let roleArr = [
-  "mafia",
-  "doctor",
-  "detective",
-  "mafia",
-  "civilian",
-  "civilian"
-];
-const shuffler = (arr) => {
+let roleArr = ["mafia", "doctor", "detective", "mafia", "civilian", "civilian"];
+const shuffler = arr => {
   // Special thanks to CoolAJ86
   // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-  let currentIndex = arr.length, temporaryValue, randomIndex;
+  let currentIndex = arr.length,
+    temporaryValue,
+    randomIndex;
   while (0 !== currentIndex) {
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex -= 1;
@@ -59,15 +52,16 @@ const shuffler = (arr) => {
     arr[randomIndex] = temporaryValue;
   }
   return arr;
-}
+};
 
 const targetedVillager = Mafia.find({ targeted: true });
 const savedVillager = Mafia.find({ saved: true });
 
 Meteor.methods({
   "game.resetAll"() {
-    Mafia.remove({livingPlayer: true})
-    Mafia.update({},
+    Mafia.remove({ livingPlayer: true });
+    Mafia.update(
+      {},
       {
         $set: {
           alive: true,
@@ -76,20 +70,18 @@ Meteor.methods({
           saved: false
         }
       },
-      { multi: true })
-    Messages.remove({})
-    GamePhase.update({ activePhase: true }, {$set: { activePhase: false }}, { multi: true })
-    GamePhase.update({ phase: 1 }, {$set: { activePhase: true }})
-    GamePhase.update({}, {$set: { feedback: 0 }}, { multi: true })
-    roleArr = [
-      "mafia",
-      "doctor",
-      "detective",
-      "mafia",
-      "civilian",
-      "civilian"
-    ];
-    let shuffledRoles = shuffler(roleArr)
+      { multi: true }
+    );
+    Messages.remove({});
+    GamePhase.update(
+      { activePhase: true },
+      { $set: { activePhase: false } },
+      { multi: true }
+    );
+    GamePhase.update({ phase: 1 }, { $set: { activePhase: true } });
+    GamePhase.update({}, { $set: { feedback: 0 } }, { multi: true });
+    roleArr = ["mafia", "doctor", "detective", "mafia", "civilian", "civilian"];
+    let shuffledRoles = shuffler(roleArr);
   },
   "player.createNew"(name) {
     if (Mafia.find().count() < 6) {
@@ -159,8 +151,10 @@ Meteor.methods({
       }
     });
   },
-  "player.investigate"(villager) {
-    const inv = Mafia.find({ _id: villager }, { _id: 0, role: 1 }).fetch();
+  "player.checkMafia"(villagerId) {
+    console.log(villagerId, "player.checkMafia");
+    console.log(Mafia.find({ _id: villagerId }, { _id: 0, role: 1 }).fetch());
+    return Mafia.find({ _id: villagerId }, { _id: 0, role: 1 }).fetch();
   },
   "player.setLynchTarget"(villager) {
     let votesForLynch = villager.votesForLynch;
@@ -233,12 +227,16 @@ Meteor.methods({
         // Mafia picked the same villager as the doctor.  Villager lives.  Targeted and saved are reset.
         else if (Mafia.find({ targeted: true }).count() === 1) {
           //IF THE DOCTOR IS ALIVE - THEN CHECK SAVED.
-          if(Mafia.find({ $and: [{ role: "doctor" }, { alive: true }] }).count()===1){
+          if (
+            Mafia.find({
+              $and: [{ role: "doctor" }, { alive: true }]
+            }).count() === 1
+          ) {
             let targeted = Mafia.find({ targeted: true }).fetch();
             let saved = Mafia.find({ saved: true }).fetch();
             if (saved[0].name === targeted[0].name) {
               let villager = Mafia.find({ targeted: true }).fetch();
-  
+
               Messages.insert({
                 sender: "Narrator",
                 recipient: "Everyone",
@@ -271,14 +269,14 @@ Meteor.methods({
                 },
                 { multi: true }
               );
-  
+
               // Mafia and doctor visited different people.  The villager visited by the mafia has died.
             } else if (
               Mafia.find({ targeted: true }).fetch() !==
               Mafia.find({ saved: true }).fetch()
             ) {
               let targeted = Mafia.find({ targeted: true }).fetch();
-  
+
               Messages.insert({
                 sender: "Narrator",
                 recipient: "Everyone",
@@ -288,7 +286,7 @@ Meteor.methods({
                   targeted[0].name
                 }??`
               });
-  
+
               Mafia.update(
                 { targeted: true },
                 {
@@ -298,7 +296,7 @@ Meteor.methods({
                   }
                 }
               );
-  
+
               Mafia.update(
                 { saved: true },
                 {
@@ -320,7 +318,7 @@ Meteor.methods({
             //IF THE DOCTOR IS DEAD, JUST KILL THE TARGET
           } else {
             let targeted = Mafia.find({ targeted: true }).fetch();
-  
+
             Messages.insert({
               sender: "Narrator",
               recipient: "Everyone",
@@ -359,7 +357,6 @@ Meteor.methods({
               { multi: true }
             );
           }
-   
         }
         //ALL PEOPLE DEAD OR ALIVE NOW. DID ANYONE WIN?
         //VILLAGER WIN
@@ -369,7 +366,10 @@ Meteor.methods({
         ) {
           GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
 
-          GamePhase.update({ phase: 6 }, { $set: { activePhase: true, winner:'villagers' } });
+          GamePhase.update(
+            { phase: 6 },
+            { $set: { activePhase: true, winner: "villagers" } }
+          );
           Messages.insert({
             sender: "Narrator",
             recipient: "Everyone",
@@ -388,7 +388,10 @@ Meteor.methods({
         ) {
           GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
 
-          GamePhase.update({ phase: 6 }, { $set: { activePhase: true , winner: 'mafia'} });
+          GamePhase.update(
+            { phase: 6 },
+            { $set: { activePhase: true, winner: "mafia" } }
+          );
           Messages.insert({
             sender: "Narrator",
             recipient: "Everyone",
