@@ -3,9 +3,10 @@ import "./styles.css";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import { Mafia } from "../../api/mafia";
-import { Messages } from "../../api/mafia";
-import { GamePhase } from "../../api/mafia";
+import { Messages } from "../../api/messages";
+import { GamePhase } from "../../api/gamePhase";
 import PlayerList from "../../ui/components/PlayerList";
+import PlayerCard from "../../ui/components/PlayerCard";
 import Chatbox from "../../ui/components/Chatbox";
 import ChatInput from "../../ui/components/ChatInput";
 import Buttons from "../../ui/components/Buttons";
@@ -144,10 +145,6 @@ class Game extends Component {
       Meteor.call("player.hasActed", currentUser);
       Meteor.call("game.updateDaytimeFeedback");
     }
-  };
-
-  handleSelect = button => {
-    console.log(button);
   };
 
   filterMessages = role => {
