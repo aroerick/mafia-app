@@ -1,12 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom'
-import './main.css'
-import App from './../imports/ui/containers/App';
-import {Meteor} from 'meteor/meteor'
-import './main.html';
+import React from "react";
+import { Meteor } from "meteor/meteor";
+import ReactDOM from "react-dom";
 import registerServiceWorker from './registerServiceWorker'
+import "./main.css";
+import "./main.html";
 
-Meteor.startup(()=>{ 
-  ReactDOM.render(<App />, document.getElementById('root'))
-  registerServiceWorker()
+import "../imports/routes";
+
+import App from "../imports/ui/containers/App";
+
+Meteor.startup(() => {
+  ReactDOM.render(<App />, document.getElementById("root"));
+  registerServiceWorker();
 });

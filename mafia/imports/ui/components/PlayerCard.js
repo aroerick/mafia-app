@@ -14,7 +14,9 @@ const PlayerCard = ({ currentUser }
     <Modal.Content image>
       <Image wrapped size='medium' src='https://react.semantic-ui.com/images/avatar/large/rachel.png' />
       <Modal.Description>
-        <Header></Header>
+        <Header>
+          
+        </Header>
         <p></p>
       </Modal.Description>
     </Modal.Content>
