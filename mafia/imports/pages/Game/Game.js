@@ -193,9 +193,7 @@ class Game extends Component {
           <div>
             <Header as="h3">Welcome to the game</Header>
             <Header as="h2" dividing>
-              {" "}
-              Hello {this.props.currentUser[0].name}, you have been assigned the
-              role of: {this.props.currentUser[0].role}{" "}
+              <PlayerCard currentUser={currentUser} />
             </Header>
             <PlayerList township={township} />
             <Divider horizontal>Chat Area</Divider>
