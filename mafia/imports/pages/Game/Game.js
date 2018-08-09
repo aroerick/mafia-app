@@ -13,11 +13,11 @@ import Buttons from "../../ui/components/Buttons";
 import DayButtons from "../../ui/components/DayButtons";
 import {
   Button,
-  Divider,
   Header,
   Container,
   Form,
-  Message
+	Accordion,
+	Message
 } from "semantic-ui-react";
 
 class Game extends Component {
@@ -25,11 +25,12 @@ class Game extends Component {
     super(props);
     this.inputRef = React.createRef();
     this.playerName = React.createRef();
-    this.state = {
-      mafiaChatActive: false,
-      joinGameError: false,
+    this.state = { 
+			mafiaChatActive: false,
+			activeIndex: 0,
+			joinGameError: false,
       joinError: ""
-    };
+		};
   }
   reset = () => {
     Meteor.call("game.resetAll");
@@ -147,7 +148,14 @@ class Game extends Component {
       let unfilteredMessages = this.props.messages;
       return unfilteredMessages;
     }
-  };
+	};
+	handleClick = (e, titleProps) => {
+    const { index } = titleProps
+    const { activeIndex } = this.state
+    const newIndex = activeIndex === index ? -1 : index
+
+    this.setState({ activeIndex: newIndex })
+  }
 
   render() {
     const {
@@ -156,7 +164,8 @@ class Game extends Component {
       messages,
       gamePhase,
       currentUser
-    } = this.props;
+		} = this.props;
+		const { activeIndex } = this.state
 
     return (
       <Container>
@@ -186,44 +195,62 @@ class Game extends Component {
             </Form.Field>
           </Form>
         ) : (
-          <div>
+					<div>
             <Header as="h3">Welcome to the game</Header>
-            <Header as="h2" dividing>
+            <Header as="h2">
               <PlayerCard currentUser={currentUser} />
             </Header>
-            <PlayerList township={township} />
-            <Divider horizontal>Chat Area</Divider>
-            <Chatbox messages={messages} />
-            <ChatInput
-              inputRef={this.inputRef}
-              handleChatSubmit={
-                this.state.mafiaChatActive
-                  ? this.handleMafiaChatSubmit
-                  : this.handleChatSubmit
-              }
-              isDisabled={
-                (currentUser[0].role !== "mafia" &&
-                  gamePhase.length >= 5 &&
-                  gamePhase[2].activePhase) ||
-                !currentUser[0].alive
-                  ? true
-                  : false
-              }
-              currentUser={currentUser}
-              toggleMafiaChat={this.toggleMafiaChat}
-            />
+						<Accordion styled>
+						<Accordion.Title active={activeIndex === 0} index={0} onClick={this.handleClick}>
+							The Township
+						</Accordion.Title>
+            <Accordion.Content active={activeIndex === 0}>
+              <PlayerList township={township} />
+            </Accordion.Content>
+            {/* <Divider horizontal>Chat Area</Divider> */}
+						<Accordion.Title active={activeIndex === 1} index={1} onClick={this.handleClick}>
+							Chat Area
+						</Accordion.Title>
+            <Accordion.Content active={activeIndex === 1}>
+              <Chatbox messages={messages} />
+              <ChatInput
+                inputRef={this.inputRef}
+                handleChatSubmit={
+                  this.state.mafiaChatActive
+                    ? this.handleMafiaChatSubmit
+                    : this.handleChatSubmit
+                }
+                isDisabled={
+                  (currentUser[0].role !== "mafia" &&
+                    gamePhase.length >= 5 &&
+                    gamePhase[2].activePhase) ||
+                  !currentUser[0].alive
+                    ? true
+                    : false
+                }
+                currentUser={currentUser}
+                toggleMafiaChat={this.toggleMafiaChat}
+              />
+            </Accordion.Content>
             {(gamePhase.length >= 5 && !gamePhase[2].activePhase) ||
             this.props.currentUser[0].hasActed ||
             !this.props.currentUser[0].alive ? (
               ""
             ) : (
-              <Buttons
-                township={township}
-                currentUser={currentUser}
-                setTarget={this.setTarget}
-                setSaved={this.setSaved}
-                investigate={this.investigate}
-              />
+							<div>
+							<Accordion.Title active={activeIndex === 2} index={2} onClick={this.handleClick}>
+								Time to Act!
+							</Accordion.Title>
+              <Accordion.Content active={activeIndex === 2}>
+                <Buttons
+                  township={township}
+                  currentUser={currentUser}
+                  setTarget={this.setTarget}
+                  setSaved={this.setSaved}
+                  investigate={this.investigate}
+                />
+              </Accordion.Content>
+							</div>
             )}
             {gamePhase.length >= 5 &&
             gamePhase[4].activePhase &&
@@ -237,7 +264,8 @@ class Game extends Component {
             ) : (
               ""
             )}
-          </div>
+          </Accordion>
+					</div>
         )}
       </Container>
     );
