@@ -12,6 +12,7 @@ import Buttons from "./../../components/Buttons";
 import DayButtons from "./../../components/DayButtons";
 import { Input, Divider, Header, Container, Form } from "semantic-ui-react";
 // import Actions from "../../components/Actions";
+import PlayerCard from '../../components/PlayerCard'
 
 class App extends Component {
   constructor(props) {
@@ -158,9 +159,7 @@ class App extends Component {
             <div>
               <Header as="h3">Welcome to the game</Header>
               <Header as="h2" dividing>
-                {" "}
-                Hello {this.props.currentUser[0].name}, you have been assigned
-                the role of: {this.props.currentUser[0].role}{" "}
+                <PlayerCard currentUser={currentUser} />
               </Header>
               <PlayerList township={township} />
               {/* <hr />////CHAT AREA////<hr /> */}
