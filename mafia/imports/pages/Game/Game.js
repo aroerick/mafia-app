@@ -16,15 +16,9 @@ import {
   Header,
   Container,
   Form,
-<<<<<<< HEAD
   Accordion,
   Message,
   Icon
-=======
-  Icon,
-	Accordion,
-	Message
->>>>>>> d2c083e2d4859f81c9960a35f44c16f5063a5363
 } from 'semantic-ui-react';
 
 class Game extends Component {
