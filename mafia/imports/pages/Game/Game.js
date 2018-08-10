@@ -159,7 +159,7 @@ class Game extends Component {
     this.setState({ activeAccordion: newIndex });
   };
   victoryRedirect = gamePhase => {
-    if (gamePhase[5] && gamePhase[5].winner !== "") {
+    if (gamePhase[5] && gamePhase[5].winner !== '') {
       this.props.history.push('/victory');
     }
   };
@@ -176,7 +176,6 @@ class Game extends Component {
 
     return (
       <Container>
-        <Button color="red" onClick={this.reset} content="BOOM" />
         <Header as="h1" block>
           Join the Township. Current population: {this.props.township.length}
           /6
@@ -303,19 +302,21 @@ class Game extends Component {
     );
   }
 }
-export default withRouter(withTracker(() => {
-  Meteor.subscribe('currentPlayer');
-  Meteor.subscribe('gamePhases');
-  Meteor.subscribe('players');
-  Meteor.subscribe('messagesForEveryone');
-  Meteor.subscribe('messagesForRole');
-  Meteor.subscribe('messagesForPlayer');
+export default withRouter(
+  withTracker(() => {
+    Meteor.subscribe('currentPlayer');
+    Meteor.subscribe('gamePhases');
+    Meteor.subscribe('players');
+    Meteor.subscribe('messagesForEveryone');
+    Meteor.subscribe('messagesForRole');
+    Meteor.subscribe('messagesForPlayer');
 
-  return {
-    township: Mafia.find().fetch(),
-    messages: Messages.find().fetch(),
-    currentUserId: Meteor.userId(),
-    currentUser: Mafia.find({ player: Meteor.userId() }).fetch(),
-    gamePhase: GamePhase.find().fetch()
-  };
-})(Game));
+    return {
+      township: Mafia.find().fetch(),
+      messages: Messages.find().fetch(),
+      currentUserId: Meteor.userId(),
+      currentUser: Mafia.find({ player: Meteor.userId() }).fetch(),
+      gamePhase: GamePhase.find().fetch()
+    };
+  })(Game)
+);

@@ -1,6 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
-import { GamePhase } from './gamePhase'
+import { GamePhase } from './gamePhase';
 
 export const Mafia = new Mongo.Collection('mafia');
 
@@ -47,12 +47,18 @@ if (Meteor.isServer) {
   });
 }
 
-const roleArr = ['mafia', 'doctor', 'detective', 'mafia', 'civilian', 'civilian'];
+const roleArr = [
+  'mafia',
+  'doctor',
+  'detective',
+  'mafia',
+  'civilian',
+  'civilian'
+];
 
 Meteor.methods({
   'player.createNew'(name) {
-    const role = GamePhase.find({ phase: 1  }).fetch()[0].roleArr
-    console.log(role)
+    const role = GamePhase.find({ phase: 1 }).fetch()[0].roleArr;
     const newPlayer = {
       name,
       role: role[0],
@@ -71,14 +77,12 @@ Meteor.methods({
         };
       } else {
         Mafia.insert(newPlayer);
-        shiftedRole = role
-        shiftedRole.shift()
-        console.log(role)
-        console.log(shiftedRole)
-        GamePhase.update({ phase: 1  }, {$set: {roleArr: shiftedRole }})
-        console.log(role)
+        shiftedRole = role;
+        shiftedRole.shift();
+
+        GamePhase.update({ phase: 1 }, { $set: { roleArr: shiftedRole } });
+
         // roleArr.shift();
-        console.log(shuffledArray, 'shuffle per char connect');
       }
     } else {
       return { joinGameError: true, joinError: 'Lobby full' };

@@ -17,7 +17,6 @@ class Victory extends Component {
 
   render() {
     const { gamePhase, currentUser } = this.props;
-    console.log(gamePhase[5]);
     return (
       <div>
         <div>{currentUser[0] ? currentUser[0].name : ''}</div>

@@ -60,7 +60,6 @@ const Buttons = ({
     default:
       message = 'Lullaby and Goodnight';
   }
-  console.log(currentUser);
   return (
     <section>
       <h3>{message}</h3>
