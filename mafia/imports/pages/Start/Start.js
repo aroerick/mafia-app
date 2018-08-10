@@ -20,8 +20,7 @@ import {
   Message,
   Icon
 } from 'semantic-ui-react';
-import { Link } from 'react-router-dom'
-
+import { Link } from 'react-router-dom';
 
 class Start extends Component {
   constructor(props) {
@@ -176,9 +175,13 @@ class Start extends Component {
 
     return (
       <Container>
-        <Header as="h1" block>
-          MAFIA
-        </Header>
+        <h2 class="ui icon center aligned header">
+          <i aria-hidden="true" class="users circular icon" />
+          <Header as="h1" block>
+            MAFIA
+          </Header>
+        </h2>
+
         <Link to={`/`}>
           <Button color="red" onClick={this.reset} content="START THE GAME" />
         </Link>
