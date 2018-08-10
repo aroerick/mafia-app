@@ -1,3 +1,3 @@
-import './register-api.js'
+import './register-api.js';
 
-import './fixtures'
+import './fixtures';

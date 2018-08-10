@@ -1,8 +1,8 @@
-import React from "react";
-import { Meteor } from "meteor/meteor";
-import { Redirect, Route, Switch } from "react-router";
-import Game from "../pages/Game";
-import Victory from "../pages/Victory";
+import React from 'react';
+import { Meteor } from 'meteor/meteor';
+import { Redirect, Route, Switch } from 'react-router';
+import Game from '../pages/Game';
+import Victory from '../pages/Victory';
 
 export default () => (
   <div>

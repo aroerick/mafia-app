@@ -1,3 +1,3 @@
-import Victory from './Victory'
+import Victory from './Victory';
 
-export default Victory
+export default Victory;

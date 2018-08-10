@@ -1,3 +1,3 @@
-import '../../api/mafia'
-// import '../../api/messages'
-// import '../../api/gamePhase'
+import '../../api/mafia';
+import '../../api/messages';
+import '../../api/gamePhase';
