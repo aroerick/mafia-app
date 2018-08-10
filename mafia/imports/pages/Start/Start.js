@@ -176,7 +176,7 @@ class Start extends Component {
     return (
       <Container>
         <h2 class="ui icon center aligned header">
-          <i aria-hidden="true" class="users circular icon" />
+          <i aria-hidden="true" className="users circular icon" />
           <Header as="h1" block>
             MAFIA
           </Header>

@@ -8,9 +8,10 @@ import Routes from '../../../routes';
 
 class App extends Component {
   render() {
+    const { gamePhase } = this.props;
     return (
       <Router>
-        <Routes gamePhase={GamePhase}/>
+        <Routes gamePhase={gamePhase} />
       </Router>
     );
   }

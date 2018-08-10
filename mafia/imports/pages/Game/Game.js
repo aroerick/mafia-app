@@ -159,7 +159,7 @@ class Game extends Component {
     this.setState({ activeAccordion: newIndex });
   };
   victoryRedirect = gamePhase => {
-    if (gamePhase[5] && gamePhase[5].winner) {
+    if (gamePhase[5] && gamePhase[5].winner !== "") {
       this.props.history.push('/victory');
     }
   };
