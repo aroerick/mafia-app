@@ -78,9 +78,13 @@ Meteor.methods({
     };
     Mafia.schema.validate(newPlayer);
     if (Mafia.find().count() < 6) {
-      Mafia.insert(newPlayer);
-      shuffledArray.shift();
-      // roleArr.shift();
+      if (Mafia.find({ name: name }).count() > 0) {
+        return { joinGameError: true, joinError: "This name has already been used" }
+      } else {
+        Mafia.insert(newPlayer);
+        shuffledArray.shift();
+        // roleArr.shift();
+      }
     } else {
       return { joinGameError: true, joinError: 'Lobby full' };
     }

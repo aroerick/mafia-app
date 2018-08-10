@@ -1,5 +1,5 @@
-import React from 'react'
-import { Button, Header, Image, Modal, Icon } from 'semantic-ui-react'
+import React from 'react';
+import { Button, Header, Image, Modal, Icon } from 'semantic-ui-react';
 
 const PlayerCard = ({ currentUser }) => {
   text = "";
