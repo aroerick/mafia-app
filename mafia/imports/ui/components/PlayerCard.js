@@ -40,7 +40,7 @@ const PlayerCard = ({ currentUser }) => {
       trigger={
         <Button
           fluid
-          basic
+          // basic
           color={color}
           icon
           labelPosition="right"
