@@ -34,7 +34,8 @@ Meteor.startup(() => {
     GamePhase.insert({
       phase: 1,
       title: 'Lobby',
-      activePhase: false
+      activePhase: false,
+      roleArr: ['mafia', 'doctor', 'detective', 'mafia', 'civilian', 'civilian']
     });
     GamePhase.insert({
       phase: 2,

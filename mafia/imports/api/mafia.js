@@ -1,6 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
-import shuffledArray from './gamePhase'
+import { GamePhase } from './gamePhase'
 
 export const Mafia = new Mongo.Collection('mafia');
 
@@ -48,28 +48,14 @@ if (Meteor.isServer) {
 }
 
 const roleArr = ['mafia', 'doctor', 'detective', 'mafia', 'civilian', 'civilian'];
-// const shuffler = arr => {
-//   // Special thanks to CoolAJ86
-//   // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-//   let currentIndex = arr.length,
-//     temporaryValue,
-//     randomIndex;
-//   while (0 !== currentIndex) {
-//     randomIndex = Math.floor(Math.random() * currentIndex);
-//     currentIndex -= 1;
-//     temporaryValue = arr[currentIndex];
-//     arr[currentIndex] = arr[randomIndex];
-//     arr[randomIndex] = temporaryValue;
-//   }
-//   return arr;
-// };
-// export const ShuffledArray = shuffler(roleArr)
 
 Meteor.methods({
   'player.createNew'(name) {
+    const role = GamePhase.find({ phase: 1  }).fetch()[0].roleArr
+    console.log(role)
     const newPlayer = {
       name,
-      role: shuffledArray[0],
+      role: role[0],
       // role: roleArr[0],
       alive: true,
       player: Meteor.userId(),
@@ -82,7 +68,12 @@ Meteor.methods({
         return { joinGameError: true, joinError: "This name has already been used" }
       } else {
         Mafia.insert(newPlayer);
-        shuffledArray.shift();
+        shiftedRole = role
+        shiftedRole.shift()
+        console.log(role)
+        console.log(shiftedRole)
+        GamePhase.update({ phase: 1  }, {$set: {roleArr: shiftedRole }})
+        console.log(role)
         // roleArr.shift();
       }
     } else {
