@@ -9,6 +9,24 @@ if (Meteor.isServer) {
     return GamePhase.find({});
   });
 }
+
+let roleArr = ['mafia', 'doctor', 'detective', 'mafia', 'civilian', 'civilian'];
+shuffler = arr => {
+  // Special thanks to CoolAJ86
+  // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+  let currentIndex = arr.length,
+    temporaryValue,
+    randomIndex;
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    temporaryValue = arr[currentIndex];
+    arr[currentIndex] = arr[randomIndex];
+    arr[randomIndex] = temporaryValue;
+  }
+  return arr;
+};
+
 Meteor.methods({
   'game.resetAll'() {
     Mafia.remove({ livingPlayer: true });
@@ -28,7 +46,9 @@ Meteor.methods({
     GamePhase.update({ phase: 1 }, { $set: { activePhase: true } });
     GamePhase.update({}, { $set: { feedback: 0 } }, { multi: true });
     roleArr = ['mafia', 'doctor', 'detective', 'mafia', 'civilian', 'civilian'];
-    // let shuffledRoles = shuffler(roleArr)
+    shuffledArray = shuffler(roleArr)
+    console.log(shuffledArray)
+    export default shuffledArray
   },
   'game.nextPhase'() {
     GamePhase.update({ phase: 1 }, { $set: { activePhase: false } });
