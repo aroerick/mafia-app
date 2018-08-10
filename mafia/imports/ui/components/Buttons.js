@@ -1,37 +1,39 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Button } from "semantic-ui-react"
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Button } from 'semantic-ui-react';
 
-const Buttons = ({ township, currentUser, setTarget, setSaved, investigate }) => {
-  message = "";
+const Buttons = ({
+  township, currentUser, setTarget, setSaved, investigate }) => {
+  message = '';
   actions = null;
   switch (currentUser[0].role) {
-    case "mafia":
-      message = "Choose a target";
+    case 'mafia':
+      message = 'Choose a target';
       actions = township
         .filter(villager => villager.alive)
         .map(villager => <Button key={villager.name} basic color="teal" name={villager.name} onClick={() => setTarget(villager, currentUser)}>{villager.name}</Button>);
       break;
-    case "doctor":
-      message = "Save someone!";
+    case 'doctor':
+      message = 'Save someone!';
       actions = township
         .filter(villager => villager.alive)
-        .map(villager => <Button basic color="pink" name={villager.name} onClick={() => setSaved(villager, currentUser)}>{villager.name}</Button>);
+        .map(villager => <Button key={villager.name} basic color="pink" name={villager.name} onClick={() => setSaved(villager, currentUser)}>{villager.name}</Button>);
       break;
-    case "detective":
+    case 'detective':
       message = <span>Probe. Deep.</span>;
       actions = township
         .filter(villager => villager.alive)
         .filter(villager => currentUser[0]._id !== villager._id)
-        .map(villager => <Button basic color="orange" name={villager.name} onClick={() => investigate(villager, currentUser)}>{villager.name}</Button>);
+        .map(villager => <Button key={villager.name} basic color="orange" name={villager.name} onClick={() => investigate(villager, currentUser)}>{villager.name}</Button>);
       break;
     default:
-      message = "Lullaby and Goodnight";
+      message = 'Lullaby and Goodnight';
   }
+  console.log(currentUser)
   return (
     <section>
-			<h3>{message}</h3> 
-			<div>{actions}</div>
+      <h3>{message}</h3>
+      <div>{actions}</div>
     </section>
   );
 };
@@ -43,7 +45,13 @@ Buttons.propTypes = {
       name: PropTypes.string.isRequired,
       alive: PropTypes.bool.isRequired
     })
-  )
+  ),
+  // currentUser: PropTypes.arrayOf(
+  //   PropTypes.shape({
+  //     _id: PropTypes.string.isRequired,
+
+  //   })
+  // )
 };
 
 export default Buttons;

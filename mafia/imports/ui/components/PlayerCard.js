@@ -1,5 +1,5 @@
-import React from 'react'
-import { Button, Header, Image, Modal } from 'semantic-ui-react'
+import React from 'react';
+import { Button, Header, Image, Modal, Icon } from 'semantic-ui-react';
 
 const PlayerCard = ({ currentUser }) => {
   text = '';
@@ -31,7 +31,8 @@ const PlayerCard = ({ currentUser }) => {
     <Modal.Content image>
       <Image wrapped size='medium' src='https://react.semantic-ui.com/images/avatar/large/rachel.png' />
       <Modal.Description>
-        <Header>{currentUser[0].role}
+        <Header>
+          {currentUser[0].role}
         </Header>
           <p>{text}</p>
       </Modal.Description>

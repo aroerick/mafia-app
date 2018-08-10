@@ -4,12 +4,29 @@ import { Messages } from './messages';
 
 export const GamePhase = new Mongo.Collection('gamePhase');
 
-
 if (Meteor.isServer) {
   Meteor.publish('gamePhases', function gamePhasesPublication() {
     return GamePhase.find({});
   });
 }
+
+let roleArr = ['mafia', 'doctor', 'detective', 'mafia', 'civilian', 'civilian'];
+shuffler = arr => {
+  // Special thanks to CoolAJ86
+  // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+  let currentIndex = arr.length,
+    temporaryValue,
+    randomIndex;
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    temporaryValue = arr[currentIndex];
+    arr[currentIndex] = arr[randomIndex];
+    arr[randomIndex] = temporaryValue;
+  }
+  return arr;
+};
+
 Meteor.methods({
   'game.resetAll'() {
     Mafia.remove({ livingPlayer: true });
@@ -29,7 +46,9 @@ Meteor.methods({
     GamePhase.update({ phase: 1 }, { $set: { activePhase: true } });
     GamePhase.update({}, { $set: { feedback: 0 } }, { multi: true });
     roleArr = ['mafia', 'doctor', 'detective', 'mafia', 'civilian', 'civilian'];
-    // let shuffledRoles = shuffler(roleArr)
+    shuffledArray = shuffler(roleArr)
+    console.log(shuffledArray)
+    export default shuffledArray
   },
   'game.nextPhase'() {
     GamePhase.update({ phase: 1 }, { $set: { activePhase: false } });
@@ -193,10 +212,9 @@ Meteor.methods({
           0
         ) {
           GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
-
           GamePhase.update(
             { phase: 6 },
-            { $set: { activePhase: true, winner: 'villagers' } }
+            { $set: { winner: 'villagers', activePhase: true}}
           );
           Messages.insert({
             sender: 'Narrator',
@@ -216,7 +234,7 @@ Meteor.methods({
           GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
           GamePhase.update(
             { phase: 6 },
-            { $set: { activePhase: true, winner: 'mafia' } }
+            { $set: { winner: 'mafia', activePhase: true }}
           );
           Messages.insert({
             sender: 'Narrator',
@@ -285,7 +303,7 @@ Meteor.methods({
       ) {
         GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
 
-        GamePhase.update({ phase: 6 }, { $set: { activePhase: true } });
+        GamePhase.update({ phase: 6 }, { $set: { activePhase: true, winner: 'villagers' } });
         Messages.insert({
           sender: 'Narrator',
           recipient: 'Everyone',
@@ -301,7 +319,7 @@ Meteor.methods({
         }).count() < 2
       ) {
         GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
-        GamePhase.update({ phase: 6 }, { $set: { activePhase: true } });
+        GamePhase.update({ phase: 6 }, { $set: { activePhase: true, winner: 'mafia' } });
 
         Messages.insert({
           sender: 'Narrator',

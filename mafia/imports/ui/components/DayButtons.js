@@ -11,6 +11,7 @@ const DayButtons = ({ township, currentUser, setLynchTarget }) => {
       <div>
         {township.filter(villager => villager.alive).map(villager => (
           <Button
+            key={villager.name}
             basic
             color='purple'
             name={villager.name}
@@ -26,7 +27,6 @@ const DayButtons = ({ township, currentUser, setLynchTarget }) => {
         name=''
         onClick={() => setLynchTarget('', currentUser)}
       >
-        {' '}
         No One
       </Button>
     </section>
