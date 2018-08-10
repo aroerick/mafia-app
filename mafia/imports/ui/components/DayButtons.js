@@ -1,18 +1,18 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Button, Header } from "semantic-ui-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Button, Header } from 'semantic-ui-react';
 
 const DayButtons = ({ township, currentUser, setLynchTarget }) => {
   return (
     <section>
-      <Header as="h3">
+      <Header as='h3'>
         Select a villager for lynching. Or are you feeling merciful?
       </Header>
       <div>
         {township.filter(villager => villager.alive).map(villager => (
           <Button
             basic
-            color="purple"
+            color='purple'
             name={villager.name}
             onClick={() => setLynchTarget(villager, currentUser)}
           >
@@ -22,11 +22,11 @@ const DayButtons = ({ township, currentUser, setLynchTarget }) => {
       </div>
       <Button
         basic
-        color="purple"
-        name=""
-        onClick={() => setLynchTarget("", currentUser)}
+        color='purple'
+        name=''
+        onClick={() => setLynchTarget('', currentUser)}
       >
-        {" "}
+        {' '}
         No One
       </Button>
     </section>

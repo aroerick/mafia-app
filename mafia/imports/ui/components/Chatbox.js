@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import ReactDOM from "react-dom";
-import PropTypes from "prop-types";
-import { Message } from "semantic-ui-react";
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
+import { Message } from 'semantic-ui-react';
 
 class Chatbox extends Component {
   UNSAFE_componentWillUpdate() {
@@ -16,12 +16,12 @@ class Chatbox extends Component {
   render() {
     const { messages } = this.props;
     return (
-      <div style={{ maxHeight: "400px", overflowY: "scroll" }}>
+      <div style={{ maxHeight: '400px', overflowY: 'scroll' }}>
         {messages.map(message => (
-          <div key={message._id} style={{ display: "block", padding: 10 }}>
+          <div key={message._id} style={{ display: 'block', padding: 10 }}>
             <Message
               compact
-              color={message.sender === "Narrator" ? "olive" : "grey"}
+              color={message.sender === 'Narrator' ? 'olive' : 'grey'}
               floating
             >
               <Message.Header style={{ fontWeight: 600 }}>

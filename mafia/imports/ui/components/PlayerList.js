@@ -1,17 +1,17 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { List } from "semantic-ui-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { List } from 'semantic-ui-react';
 
 const PlayerList = ({ township }) => (
   <div>
     <List>
       {township.map(person => (
         <List.Item key={person._id}>
-          <List.Icon name="user" />
+          <List.Icon name='user' />
           <List.Content>
             <List.Header>{person.name}</List.Header>
             <List.Description>
-              Status: {person.alive ? "is alive" : "is dead"}
+              Status: {person.alive ? 'is alive' : 'is dead'}
             </List.Description>
           </List.Content>
         </List.Item>

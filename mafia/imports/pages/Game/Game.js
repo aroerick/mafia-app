@@ -1,16 +1,16 @@
-import React, { Component } from "react";
-import "./styles.css";
-import PropTypes from "prop-types";
-import { withTracker } from "meteor/react-meteor-data";
-import { Mafia } from "../../api/mafia";
-import { Messages } from "../../api/messages";
-import { GamePhase } from "../../api/gamePhase";
-import PlayerList from "../../ui/components/PlayerList";
-import PlayerCard from "../../ui/components/PlayerCard";
-import Chatbox from "../../ui/components/Chatbox";
-import ChatInput from "../../ui/components/ChatInput";
-import Buttons from "../../ui/components/Buttons";
-import DayButtons from "../../ui/components/DayButtons";
+import React, { Component } from 'react';
+import './styles.css';
+import PropTypes from 'prop-types';
+import { withTracker } from 'meteor/react-meteor-data';
+import { Mafia } from '../../api/mafia';
+import { Messages } from '../../api/messages';
+import { GamePhase } from '../../api/gamePhase';
+import PlayerList from '../../ui/components/PlayerList';
+import PlayerCard from '../../ui/components/PlayerCard';
+import Chatbox from '../../ui/components/Chatbox';
+import ChatInput from '../../ui/components/ChatInput';
+import Buttons from '../../ui/components/Buttons';
+import DayButtons from '../../ui/components/DayButtons';
 import {
   Button,
   Header,
@@ -18,7 +18,7 @@ import {
   Form,
 	Accordion,
 	Message
-} from "semantic-ui-react";
+} from 'semantic-ui-react';
 
 class Game extends Component {
   constructor(props) {
@@ -29,16 +29,16 @@ class Game extends Component {
 			mafiaChatActive: false,
 			activeIndex: 0,
 			joinGameError: false,
-      joinError: ""
+      joinError: ''
 		};
   }
   reset = () => {
-    Meteor.call("game.resetAll");
-    Meteor.call("messages.handleChatSubmit", {
-      sender: "Narrator",
-      recipient: "Everyone",
+    Meteor.call('game.resetAll');
+    Meteor.call('messages.handleChatSubmit', {
+      sender: 'Narrator',
+      recipient: 'Everyone',
       text:
-        "An unsettling energy stirs in the township.  There are rumours the mafia will visit an unlucky villager tonight."
+        'An unsettling energy stirs in the township.  There are rumours the mafia will visit an unlucky villager tonight.'
     });
     this.setState({ mafiaChatActive: false });
   };
@@ -47,12 +47,12 @@ class Game extends Component {
     let inputRef = this.inputRef.current;
     let currentUser = this.props.currentUser[0];
     if (inputRef.value) {
-      Meteor.call("messages.handleChatSubmit", {
+      Meteor.call('messages.handleChatSubmit', {
         text: inputRef.value,
         sender: currentUser.name,
-        recipient: "Everyone"
+        recipient: 'Everyone'
       });
-      this.inputRef.current.value = "";
+      this.inputRef.current.value = '';
     }
   };
   handleMafiaChatSubmit = e => {
@@ -60,12 +60,12 @@ class Game extends Component {
     let inputRef = this.inputRef.current;
     let currentUser = this.props.currentUser[0];
     if (inputRef.value) {
-      Meteor.call("messages.handleChatSubmit", {
+      Meteor.call('messages.handleChatSubmit', {
         text: inputRef.value,
         sender: currentUser.name,
-        recipient: "Mafia"
+        recipient: 'Mafia'
       });
-      this.inputRef.current.value = "";
+      this.inputRef.current.value = '';
     }
   };
   toggleMafiaChat = () => {
@@ -76,72 +76,72 @@ class Game extends Component {
   joinGame = () => {
     let playerName = this.playerName.current;
     if (playerName.value > 1) return;
-    Meteor.call("player.createNew", playerName.value, (error, result) => {
+    Meteor.call('player.createNew', playerName.value, (error, result) => {
       this.setState(result);
       this.startGame();
     });
   };
   startGame = () => {
     if (this.props.township.length === 6) {
-      Meteor.call("game.nextPhase");
+      Meteor.call('game.nextPhase');
     }
   };
   setTarget = (villager, currentUser) => {
-    Meteor.call("player.setTarget", villager);
-    Meteor.call("messages.handleChatSubmit", {
-      sender: "Narrator",
-      recipient: "Mafia",
+    Meteor.call('player.setTarget', villager);
+    Meteor.call('messages.handleChatSubmit', {
+      sender: 'Narrator',
+      recipient: 'Mafia',
       text: `You've targeted ${villager.name} for execution`
     });
-    Meteor.call("player.hasActed", currentUser);
-    Meteor.call("game.updateFeedback");
+    Meteor.call('player.hasActed', currentUser);
+    Meteor.call('game.updateFeedback');
   };
   setSaved = (villager, currentUser) => {
-    Meteor.call("player.setSaved", villager);
-    Meteor.call("messages.handleChatSubmit", {
-      sender: "Narrator",
-      recipient: "Doctor",
+    Meteor.call('player.setSaved', villager);
+    Meteor.call('messages.handleChatSubmit', {
+      sender: 'Narrator',
+      recipient: 'Doctor',
       text: `You've made sure ${villager.name} will make it through the night`
     });
-    Meteor.call("player.hasActed", currentUser);
-    Meteor.call("game.updateFeedback");
+    Meteor.call('player.hasActed', currentUser);
+    Meteor.call('game.updateFeedback');
   };
   investigate = (villager, currentUser) => {
-    Meteor.call("player.checkMafia", villager, (error, result) => {
-      result[0].role === "mafia"
-        ? Meteor.call("messages.handleChatSubmit", {
-            sender: "Narrator",
-            recipient: "Detective",
+    Meteor.call('player.checkMafia', villager, (error, result) => {
+      result[0].role === 'mafia'
+        ? Meteor.call('messages.handleChatSubmit', {
+            sender: 'Narrator',
+            recipient: 'Detective',
             text: `${villager.name} is part of the Mafia`
           })
-        : Meteor.call("messages.handleChatSubmit", {
-            sender: "Narrator",
-            recipient: "Detective",
+        : Meteor.call('messages.handleChatSubmit', {
+            sender: 'Narrator',
+            recipient: 'Detective',
             text: `You have no reason to suspect ${villager.name}`
           });
     });
-    Meteor.call("player.hasActed", currentUser);
-    Meteor.call("game.updateFeedback");
+    Meteor.call('player.hasActed', currentUser);
+    Meteor.call('game.updateFeedback');
   };
   setLynchTarget = (villager, currentUser) => {
-    if (villager === "") {
-      // Meteor.call("player.hasActed", currentUser);
-      Meteor.call("game.updateDaytimeFeedback");
+    if (villager === '') {
+      // Meteor.call('player.hasActed', currentUser);
+      Meteor.call('game.updateDaytimeFeedback');
     } else {
-      Meteor.call("player.setLynchTarget", villager);
-      Meteor.call("messages.handleChatSubmit", {
-        sender: "Narrator",
+      Meteor.call('player.setLynchTarget', villager);
+      Meteor.call('messages.handleChatSubmit', {
+        sender: 'Narrator',
         recipient: currentUser[0].name,
         text: `You've targeted ${villager.name} for lynching`
       });
-      Meteor.call("game.updateDaytimeFeedback");
+      Meteor.call('game.updateDaytimeFeedback');
     }
-    Meteor.call("player.hasActed", currentUser);
+    Meteor.call('player.hasActed', currentUser);
   };
   filterMessages = role => {
-    if (role != "mafia") {
+    if (role != 'mafia') {
       let filteredMessages = this.props.messages.filter(
-        message => message.role != "mafia" && message.recipient != "Mafia"
+        message => message.role != 'mafia' && message.recipient != 'Mafia'
       );
       return filteredMessages;
     } else {
@@ -169,19 +169,19 @@ class Game extends Component {
 
     return (
       <Container>
-        <Button color="red" onClick={this.reset} content="BOOM" />
-        <Header as="h1" block>
+        <Button color='red' onClick={this.reset} content='BOOM' />
+        <Header as='h1' block>
           Join the Township. Current population: {this.props.township.length}/6
         </Header>
         {Mafia.find({ player: currentUserId }).count() === 0 ? (
           <Form error={this.state.joinGameError}>
             <Form.Field>
               <input
-                type="text"
-                placeholder="What's your name?"
-                ref={this.playerName}
-                onKeyDown={event => {
-                  if (event.key == "Enter") {
+                type = 'text'
+                placeholder = "What's your name?"
+                ref = {this.playerName}
+                onKeyDown = {event => {
+                  if (event.key == 'Enter') {
                     this.joinGame();
                   }
                 }}
@@ -189,15 +189,15 @@ class Game extends Component {
 
               <Message
                 error
-                header="Error in Joining"
+                header='Error in Joining'
                 content={this.state.joinError}
               />
             </Form.Field>
           </Form>
         ) : (
 					<div>
-            <Header as="h3">Welcome to the game</Header>
-            <Header as="h2">
+            <Header as='h3'>Welcome to the game</Header>
+            <Header as='h2'>
               <PlayerCard currentUser={currentUser} />
             </Header>
 						<Accordion styled>
@@ -221,7 +221,7 @@ class Game extends Component {
                     : this.handleChatSubmit
                 }
                 isDisabled={
-                  (currentUser[0].role !== "mafia" &&
+                  (currentUser[0].role !== 'mafia' &&
                     gamePhase.length >= 5 &&
                     gamePhase[2].activePhase) ||
                   !currentUser[0].alive
@@ -235,7 +235,7 @@ class Game extends Component {
             {(gamePhase.length >= 5 && !gamePhase[2].activePhase) ||
             this.props.currentUser[0].hasActed ||
             !this.props.currentUser[0].alive ? (
-              ""
+              ''
             ) : (
 							<div>
 							<Accordion.Title active={activeIndex === 2} index={2} onClick={this.handleClick}>
@@ -262,7 +262,7 @@ class Game extends Component {
                 setLynchTarget={this.setLynchTarget}
               />
             ) : (
-              ""
+              ''
             )}
           </Accordion>
 					</div>
@@ -272,12 +272,12 @@ class Game extends Component {
   }
 }
 export default withTracker(() => {
-  Meteor.subscribe("currentPlayer");
-  Meteor.subscribe("gamePhases");
-  Meteor.subscribe("players");
-  Meteor.subscribe("messagesForEveryone");
-  Meteor.subscribe("messagesForRole");
-  Meteor.subscribe("messagesForPlayer");
+  Meteor.subscribe('currentPlayer');
+  Meteor.subscribe('gamePhases');
+  Meteor.subscribe('players');
+  Meteor.subscribe('messagesForEveryone');
+  Meteor.subscribe('messagesForRole');
+  Meteor.subscribe('messagesForPlayer');
 
   return {
     township: Mafia.find().fetch(),
