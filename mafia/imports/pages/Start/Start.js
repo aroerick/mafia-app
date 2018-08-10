@@ -175,16 +175,28 @@ class Start extends Component {
 
     return (
       <Container>
-        <h2 class="ui icon center aligned header">
-          <i aria-hidden="true" className="users circular icon" />
-          <Header as="h1" block>
-            MAFIA
-          </Header>
-        </h2>
-
-        <Link to={`/`}>
-          <Button color="red" onClick={this.reset} content="START THE GAME" />
-        </Link>
+        <div
+          className="ui grid middle aligned centered"
+          style={{ height: '100vh' }}
+        >
+          <div className="one column row centered">
+            <h2 className="ui icon center aligned header">
+              <i aria-hidden="true" class="users circular icon" />
+              <Header as="h1" block>
+                MAFIA
+              </Header>
+            </h2>
+          </div>
+          <div className="one column row centered">
+            <Link to={`/`}>
+              <Button
+                color="red"
+                onClick={this.reset}
+                content="START THE GAME"
+              />
+            </Link>
+          </div>
+        </div>
       </Container>
     );
   }
