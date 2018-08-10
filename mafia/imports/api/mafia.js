@@ -65,7 +65,10 @@ Meteor.methods({
     Mafia.schema.validate(newPlayer);
     if (Mafia.find().count() < 6) {
       if (Mafia.find({ name: name }).count() > 0) {
-        return { joinGameError: true, joinError: "This name has already been used" }
+        return {
+          joinGameError: true,
+          joinError: 'This name has already been used'
+        };
       } else {
         Mafia.insert(newPlayer);
         shiftedRole = role
@@ -75,6 +78,7 @@ Meteor.methods({
         GamePhase.update({ phase: 1  }, {$set: {roleArr: shiftedRole }})
         console.log(role)
         // roleArr.shift();
+        console.log(shuffledArray, 'shuffle per char connect');
       }
     } else {
       return { joinGameError: true, joinError: 'Lobby full' };

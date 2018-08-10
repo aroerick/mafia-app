@@ -19,6 +19,13 @@ Meteor.startup(() => {
   //     votesForLynch: 0,
   //     livingPlayer: false
   //   });
+  // Mafia.insert({
+  //   name: 'Testing Tabitha',
+  //   role: 'mafia',
+  //   alive: true,
+  //   livingPlayer: false
+
+  // })
   // }
 
   if (Messages.find().count() === 0) {
@@ -65,12 +72,12 @@ Meteor.startup(() => {
       title: 'Victory',
       activePhase: false,
       feedback: 0,
-      winner: ""
+      winner: ''
     });
     GamePhase.insert({
       phase: 7,
       title: 'Create Game',
       activePhase: true
-    })
+    });
   }
 });
