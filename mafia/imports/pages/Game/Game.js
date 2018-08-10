@@ -17,7 +17,8 @@ import {
   Container,
   Form,
 	Accordion,
-	Message
+	Message,
+	Icon
 } from "semantic-ui-react";
 
 class Game extends Component {
@@ -27,11 +28,15 @@ class Game extends Component {
     this.playerName = React.createRef();
     this.state = { 
 			mafiaChatActive: false,
-			activeIndex: 0,
+			activeAccordion: 0,
 			joinGameError: false,
       joinError: ""
 		};
-  }
+	}
+	// componentDidUpdate(prevProps, prevState){
+	// 	prevProps.gamePhase && prevProps.gamePhase[3].activePhase ?
+	// 	this.setState({ activeAccordion: 1 }) : null
+	// }
   reset = () => {
     Meteor.call("game.resetAll");
     Meteor.call("messages.handleChatSubmit", {
@@ -151,10 +156,10 @@ class Game extends Component {
 	};
 	handleClick = (e, titleProps) => {
     const { index } = titleProps
-    const { activeIndex } = this.state
-    const newIndex = activeIndex === index ? -1 : index
+    const { activeAccordion } = this.state
+    const newIndex = activeAccordion === index ? -1 : index
 
-    this.setState({ activeIndex: newIndex })
+    this.setState({ activeAccordion: newIndex })
   }
 
   render() {
@@ -165,7 +170,7 @@ class Game extends Component {
       gamePhase,
       currentUser
 		} = this.props;
-		const { activeIndex } = this.state
+		const { activeAccordion } = this.state
 
     return (
       <Container>
@@ -186,7 +191,6 @@ class Game extends Component {
                   }
                 }}
               />
-
               <Message
                 error
                 header="Error in Joining"
@@ -197,21 +201,22 @@ class Game extends Component {
         ) : (
 					<div>
             <Header as="h3">Welcome to the game</Header>
-            <Header as="h2">
+            {/* <Header as="h2"> */}
               <PlayerCard currentUser={currentUser} />
-            </Header>
+            {/* </Header> */}
 						<Accordion styled>
-						<Accordion.Title active={activeIndex === 0} index={0} onClick={this.handleClick}>
+						<Accordion.Title active={activeAccordion === 0} index={0} onClick={this.handleClick}>
+							<Icon name="dropdown" />
 							The Township
 						</Accordion.Title>
-            <Accordion.Content active={activeIndex === 0}>
+            <Accordion.Content active={activeAccordion === 0}>
               <PlayerList township={township} />
             </Accordion.Content>
-            {/* <Divider horizontal>Chat Area</Divider> */}
-						<Accordion.Title active={activeIndex === 1} index={1} onClick={this.handleClick}>
+						<Accordion.Title active={activeAccordion === 1} index={1} onClick={this.handleClick}>
+							<Icon name="dropdown" />
 							Chat Area
 						</Accordion.Title>
-            <Accordion.Content active={activeIndex === 1}>
+            <Accordion.Content active={activeAccordion === 1}>
               <Chatbox messages={messages} />
               <ChatInput
                 inputRef={this.inputRef}
@@ -238,10 +243,11 @@ class Game extends Component {
               ""
             ) : (
 							<div>
-							<Accordion.Title active={activeIndex === 2} index={2} onClick={this.handleClick}>
+							<Accordion.Title active={activeAccordion === 2} index={2} onClick={this.handleClick}>
+								<Icon name="dropdown" />
 								Time to Act!
 							</Accordion.Title>
-              <Accordion.Content active={activeIndex === 2}>
+              <Accordion.Content active={activeAccordion === 2}>
                 <Buttons
                   township={township}
                   currentUser={currentUser}
@@ -256,11 +262,19 @@ class Game extends Component {
             gamePhase[4].activePhase &&
             !this.props.currentUser[0].hasActed &&
             this.props.currentUser[0].alive ? (
-              <DayButtons
-                township={township}
-                currentUser={currentUser}
-                setLynchTarget={this.setLynchTarget}
-              />
+							<div>
+								<Accordion.Title active={activeAccordion === 2} index={2} onClick={this.handleClick}>
+									<Icon name="dropdown" />
+									Time to Act!
+								</Accordion.Title>
+								<Accordion.Content active={activeAccordion === 2}>
+									<DayButtons
+										township={township}
+										currentUser={currentUser}
+										setLynchTarget={this.setLynchTarget}
+									/>
+								</Accordion.Content>
+							</div>	
             ) : (
               ""
             )}
@@ -268,13 +282,13 @@ class Game extends Component {
 					</div>
         )}
       </Container>
-    );
+		);
   }
 }
 export default withTracker(() => {
   Meteor.subscribe("currentPlayer");
-  Meteor.subscribe("gamePhases");
-  Meteor.subscribe("players");
+	Meteor.subscribe("players");
+	Meteor.subscribe("gamePhases");
   Meteor.subscribe("messagesForEveryone");
   Meteor.subscribe("messagesForRole");
   Meteor.subscribe("messagesForPlayer");
