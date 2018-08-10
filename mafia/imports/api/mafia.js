@@ -1,7 +1,7 @@
-import { Mongo } from "meteor/mongo";
-import SimpleSchema from "simpl-schema";
+import { Mongo } from 'meteor/mongo';
+import SimpleSchema from 'simpl-schema';
 
-export const Mafia = new Mongo.Collection("mafia");
+export const Mafia = new Mongo.Collection('mafia');
 
 Mafia.schema = new SimpleSchema({
   _id: {
@@ -38,15 +38,15 @@ if (Meteor.isServer) {
   AccountsGuest.enabled = true;
   AccountsGuest.anonymous = true;
 
-  Meteor.publish("currentPlayer", function currentPlayerPublication() {
+  Meteor.publish('currentPlayer', function currentPlayerPublication() {
     return Mafia.find({ player: Meteor.userId() });
   });
-  Meteor.publish("players", function playersPublication() {
+  Meteor.publish('players', function playersPublication() {
     return Mafia.find({}, { fields: { role: 0 } });
   });
 }
 
-let roleArr = ["mafia", "doctor", "detective", "mafia", "civilian", "civilian"];
+let roleArr = ['mafia', 'doctor', 'detective', 'mafia', 'civilian', 'civilian'];
 const shuffler = arr => {
   // Special thanks to CoolAJ86
   // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -63,7 +63,7 @@ const shuffler = arr => {
   return arr;
 };
 Meteor.methods({
-  "player.createNew"(name) {
+  'player.createNew'(name) {
     const newPlayer = {
       name,
       role: roleArr[0],
@@ -77,10 +77,10 @@ Meteor.methods({
       Mafia.insert(newPlayer);
       roleArr.shift();
     } else {
-      return { joinGameError: true, joinError: "Lobby full" };
+      return { joinGameError: true, joinError: 'Lobby full' };
     }
   },
-  "player.setTarget"(villager) {
+  'player.setTarget'(villager) {
     Mafia.schema.validate(villager);
     Mafia.update(villager, {
       $set: {
@@ -88,7 +88,7 @@ Meteor.methods({
       }
     });
   },
-  "player.setSaved"(villager) {
+  'player.setSaved'(villager) {
     Mafia.schema.validate(villager);
     Mafia.update(villager, {
       $set: {
@@ -96,11 +96,11 @@ Meteor.methods({
       }
     });
   },
-  "player.checkMafia"(villager) {
+  'player.checkMafia'(villager) {
     Mafia.schema.validate(villager);
     return Mafia.find({ _id: villager._id }, { _id: 0, role: 1 }).fetch();
   },
-  "player.setLynchTarget"(villager) {
+  'player.setLynchTarget'(villager) {
     Mafia.schema.validate(villager);
     let votesForLynch = villager.votesForLynch;
     votesForLynch++;
@@ -110,7 +110,7 @@ Meteor.methods({
       }
     });
   },
-  "player.hasActed"(currentUser) {
+  'player.hasActed'(currentUser) {
     Mafia.schema.validate(currentUser[0]);
     Mafia.update(currentUser[0], {
       $set: {
