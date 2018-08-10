@@ -11,6 +11,7 @@ import Chatbox from '../../ui/components/Chatbox';
 import ChatInput from '../../ui/components/ChatInput';
 import Buttons from '../../ui/components/Buttons';
 import DayButtons from '../../ui/components/DayButtons';
+import { withRouter } from 'react-router-dom';
 import {
   Button,
   Header,
@@ -33,10 +34,6 @@ class Game extends Component {
       joinError: ''
     };
   }
-  // componentDidUpdate(prevProps, prevState){
-  // 	prevProps.gamePhase && prevProps.gamePhase[3].activePhase ?
-  // 	this.setState({ activeAccordion: 1 }) : null
-  // }
   reset = () => {
     Meteor.call('game.resetAll');
     Meteor.call('messages.handleChatSubmit', {
@@ -161,6 +158,11 @@ class Game extends Component {
 
     this.setState({ activeAccordion: newIndex });
   };
+  victoryRedirect = gamePhase => {
+    if (gamePhase[5] && gamePhase[5].winner) {
+      this.props.history.push('/victory');
+    }
+  };
 
   render() {
     const {
@@ -201,10 +203,9 @@ class Game extends Component {
           </Form>
         ) : (
           <div>
+            {this.victoryRedirect(gamePhase)}
             <Header as="h3">Welcome to the game</Header>
-            {/* <Header as="h2"> */}
             <PlayerCard currentUser={currentUser} />
-            {/* </Header> */}
             <Accordion styled>
               <Accordion.Title
                 active={activeAccordion === 0}
@@ -302,7 +303,7 @@ class Game extends Component {
     );
   }
 }
-export default withTracker(() => {
+export default withRouter(withTracker(() => {
   Meteor.subscribe('currentPlayer');
   Meteor.subscribe('gamePhases');
   Meteor.subscribe('players');
@@ -317,4 +318,4 @@ export default withTracker(() => {
     currentUser: Mafia.find({ player: Meteor.userId() }).fetch(),
     gamePhase: GamePhase.find().fetch()
   };
-})(Game);
+})(Game));
