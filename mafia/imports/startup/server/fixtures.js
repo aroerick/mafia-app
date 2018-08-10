@@ -41,7 +41,7 @@ Meteor.startup(() => {
     GamePhase.insert({
       phase: 1,
       title: 'Lobby',
-      activePhase: true
+      activePhase: false
     });
     GamePhase.insert({
       phase: 2,
@@ -70,12 +70,13 @@ Meteor.startup(() => {
       phase: 6,
       title: 'Victory',
       activePhase: false,
-      feedback: 0
+      feedback: 0,
+      winner: ''
     });
     GamePhase.insert({
       phase: 7,
       title: 'Create Game',
-      activePhase: false
+      activePhase: true
     });
   }
 });
