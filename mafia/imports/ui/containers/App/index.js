@@ -10,7 +10,7 @@ class App extends Component {
   render() {
     return (
       <Router>
-        <Routes />
+        <Routes gamePhase={GamePhase}/>
       </Router>
     );
   }
