@@ -4,7 +4,6 @@ import { Messages } from './messages';
 
 export const GamePhase = new Mongo.Collection('gamePhase');
 
-
 if (Meteor.isServer) {
   Meteor.publish('gamePhases', function gamePhasesPublication() {
     return GamePhase.find({});
@@ -193,10 +192,9 @@ Meteor.methods({
           0
         ) {
           GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
-
           GamePhase.update(
             { phase: 6 },
-            { $set: { activePhase: true, winner: 'villagers' } }
+            { $set: { winner: 'villagers', activePhase: true}}
           );
           Messages.insert({
             sender: 'Narrator',
@@ -216,7 +214,7 @@ Meteor.methods({
           GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
           GamePhase.update(
             { phase: 6 },
-            { $set: { activePhase: true, winner: 'mafia' } }
+            { $set: { winner: 'mafia', activePhase: true }}
           );
           Messages.insert({
             sender: 'Narrator',
@@ -285,7 +283,7 @@ Meteor.methods({
       ) {
         GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
 
-        GamePhase.update({ phase: 6 }, { $set: { activePhase: true } });
+        GamePhase.update({ phase: 6 }, { $set: { activePhase: true, winner: 'villagers' } });
         Messages.insert({
           sender: 'Narrator',
           recipient: 'Everyone',
@@ -301,7 +299,7 @@ Meteor.methods({
         }).count() < 2
       ) {
         GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
-        GamePhase.update({ phase: 6 }, { $set: { activePhase: true } });
+        GamePhase.update({ phase: 6 }, { $set: { activePhase: true, winner: 'mafia' } });
 
         Messages.insert({
           sender: 'Narrator',
