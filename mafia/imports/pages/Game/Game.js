@@ -16,6 +16,7 @@ import {
   Header,
   Container,
   Form,
+  Icon,
 	Accordion,
 	Message
 } from 'semantic-ui-react';
