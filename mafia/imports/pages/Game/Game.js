@@ -181,7 +181,6 @@ class Game extends Component {
         {Mafia.find({ player: currentUserId }).count() === 0 ? (
           <Form error={this.state.joinGameError}>
             <Form.Field>
-							<Icon name="plus" />
               <input
                 type="text"
                 placeholder="What's your name?"
