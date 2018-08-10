@@ -32,7 +32,11 @@ class Game extends Component {
 			joinGameError: false,
       joinError: ""
 		};
-  }
+	}
+	// componentDidUpdate(prevProps, prevState){
+	// 	prevProps.gamePhase && prevProps.gamePhase[3].activePhase ?
+	// 	this.setState({ activeAccordion: 1 }) : null
+	// }
   reset = () => {
     Meteor.call("game.resetAll");
     Meteor.call("messages.handleChatSubmit", {
@@ -197,9 +201,9 @@ class Game extends Component {
         ) : (
 					<div>
             <Header as="h3">Welcome to the game</Header>
-            <Header as="h2">
+            {/* <Header as="h2"> */}
               <PlayerCard currentUser={currentUser} />
-            </Header>
+            {/* </Header> */}
 						<Accordion styled>
 						<Accordion.Title active={activeAccordion === 0} index={0} onClick={this.handleClick}>
 							<Icon name="dropdown" />
@@ -278,7 +282,7 @@ class Game extends Component {
 					</div>
         )}
       </Container>
-    );
+		);
   }
 }
 export default withTracker(() => {
