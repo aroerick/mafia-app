@@ -20,8 +20,10 @@ import {
   Message,
   Icon
 } from 'semantic-ui-react';
+import { Link } from 'react-router-dom'
 
-class Game extends Component {
+
+class Start extends Component {
   constructor(props) {
     super(props);
     this.inputRef = React.createRef();
@@ -174,130 +176,12 @@ class Game extends Component {
 
     return (
       <Container>
-        <Button color="red" onClick={this.reset} content="BOOM" />
         <Header as="h1" block>
-          Join the Township. Current population: {this.props.township.length}
-          /6
+          MAFIA
         </Header>
-        {Mafia.find({ player: currentUserId }).count() === 0 ? (
-          <Form error={this.state.joinGameError}>
-            <Form.Field>
-              <input
-                type="text"
-                placeholder="What's your name?"
-                ref={this.playerName}
-                onKeyDown={event => {
-                  if (event.key == 'Enter') {
-                    this.joinGame();
-                  }
-                }}
-              />
-              <Message
-                error
-                header="Error in Joining"
-                content={this.state.joinError}
-              />
-            </Form.Field>
-          </Form>
-        ) : (
-          <div>
-            <Header as="h3">Welcome to the game</Header>
-            {/* <Header as="h2"> */}
-            <PlayerCard currentUser={currentUser} />
-            {/* </Header> */}
-            <Accordion styled>
-              <Accordion.Title
-                active={activeAccordion === 0}
-                index={0}
-                onClick={this.handleClick}
-              >
-                <Icon name="dropdown" />
-                The Township
-              </Accordion.Title>
-              <Accordion.Content active={activeAccordion === 0}>
-                <PlayerList township={township} />
-              </Accordion.Content>
-              <Accordion.Title
-                active={activeAccordion === 1}
-                index={1}
-                onClick={this.handleClick}
-              >
-                <Icon name="dropdown" />
-                Chat Area
-              </Accordion.Title>
-              <Accordion.Content active={activeAccordion === 1}>
-                <Chatbox messages={messages} />
-                <ChatInput
-                  inputRef={this.inputRef}
-                  handleChatSubmit={
-                    this.state.mafiaChatActive
-                      ? this.handleMafiaChatSubmit
-                      : this.handleChatSubmit
-                  }
-                  isDisabled={
-                    (currentUser[0].role !== 'mafia' &&
-                      gamePhase.length >= 5 &&
-                      gamePhase[2].activePhase) ||
-                    !currentUser[0].alive
-                      ? true
-                      : false
-                  }
-                  currentUser={currentUser}
-                  toggleMafiaChat={this.toggleMafiaChat}
-                />
-              </Accordion.Content>
-              {(gamePhase.length >= 5 && !gamePhase[2].activePhase) ||
-              this.props.currentUser[0].hasActed ||
-              !this.props.currentUser[0].alive ? (
-                ''
-              ) : (
-                <div>
-                  <Accordion.Title
-                    active={activeAccordion === 2}
-                    index={2}
-                    onClick={this.handleClick}
-                  >
-                    <Icon name="dropdown" />
-                    Time to Act!
-                  </Accordion.Title>
-                  <Accordion.Content active={activeAccordion === 2}>
-                    <Buttons
-                      township={township}
-                      currentUser={currentUser}
-                      setTarget={this.setTarget}
-                      setSaved={this.setSaved}
-                      investigate={this.investigate}
-                    />
-                  </Accordion.Content>
-                </div>
-              )}
-              {gamePhase.length >= 5 &&
-              gamePhase[4].activePhase &&
-              !this.props.currentUser[0].hasActed &&
-              this.props.currentUser[0].alive ? (
-                <div>
-                  <Accordion.Title
-                    active={activeAccordion === 2}
-                    index={2}
-                    onClick={this.handleClick}
-                  >
-                    <Icon name="dropdown" />
-                    Time to Act!
-                  </Accordion.Title>
-                  <Accordion.Content active={activeAccordion === 2}>
-                    <DayButtons
-                      township={township}
-                      currentUser={currentUser}
-                      setLynchTarget={this.setLynchTarget}
-                    />
-                  </Accordion.Content>
-                </div>
-              ) : (
-                ''
-              )}
-            </Accordion>
-          </div>
-        )}
+        <Link to={`/`}>
+          <Button color="red" onClick={this.reset} content="START THE GAME" />
+        </Link>
       </Container>
     );
   }
@@ -317,4 +201,4 @@ export default withTracker(() => {
     currentUser: Mafia.find({ player: Meteor.userId() }).fetch(),
     gamePhase: GamePhase.find().fetch()
   };
-})(Game);
+})(Start);
