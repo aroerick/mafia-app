@@ -1,6 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
-import shuffledArray from './gamePhase'
+import shuffledArray from './gamePhase';
 
 export const Mafia = new Mongo.Collection('mafia');
 
@@ -47,7 +47,14 @@ if (Meteor.isServer) {
   });
 }
 
-const roleArr = ['mafia', 'doctor', 'detective', 'mafia', 'civilian', 'civilian'];
+const roleArr = [
+  'mafia',
+  'doctor',
+  'detective',
+  'mafia',
+  'civilian',
+  'civilian'
+];
 // const shuffler = arr => {
 //   // Special thanks to CoolAJ86
 //   // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -79,11 +86,15 @@ Meteor.methods({
     Mafia.schema.validate(newPlayer);
     if (Mafia.find().count() < 6) {
       if (Mafia.find({ name: name }).count() > 0) {
-        return { joinGameError: true, joinError: "This name has already been used" }
+        return {
+          joinGameError: true,
+          joinError: 'This name has already been used'
+        };
       } else {
         Mafia.insert(newPlayer);
         shuffledArray.shift();
         // roleArr.shift();
+        console.log(shuffledArray, 'shuffle per char connect');
       }
     } else {
       return { joinGameError: true, joinError: 'Lobby full' };
