@@ -7,7 +7,7 @@ const ChatInput = ({
   handleChatSubmit,
   isDisabled,
   currentUser,
-  toggleMafiaChat,
+  toggleMafiaChat
 }) => {
   return (
     <div>
@@ -15,16 +15,16 @@ const ChatInput = ({
         <Form.Field>
           <input
             ref={inputRef}
-            type='text'
-            placeholder='Enter message here'
+            type="text"
+            placeholder="Enter message here"
             disabled={isDisabled}
           />
         </Form.Field>
         {currentUser && currentUser[0].role === 'mafia' ? (
           <Form.Group>
-            <Label content='All Chat' size='tiny' pointing='right' />
+            <Label content="All Chat" size="tiny" pointing="right" />
             <Form.Checkbox slider onChange={toggleMafiaChat} />
-            <Label content='Mafia Chat' size='tiny' pointing='left' />
+            <Label content="Mafia Chat" size="tiny" pointing="left" />
           </Form.Group>
         ) : null}
       </Form>

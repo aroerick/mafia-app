@@ -7,7 +7,7 @@ const PlayerList = ({ township }) => (
     <List>
       {township.map(person => (
         <List.Item key={person._id}>
-          <List.Icon name='user' />
+          <List.Icon name="user" />
           <List.Content>
             <List.Header>{person.name}</List.Header>
             <List.Description>

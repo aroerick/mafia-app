@@ -16,8 +16,9 @@ import {
   Header,
   Container,
   Form,
-	Accordion,
-	Message
+  Accordion,
+  Message,
+  Icon
 } from 'semantic-ui-react';
 
 class Game extends Component {
@@ -25,17 +26,17 @@ class Game extends Component {
     super(props);
     this.inputRef = React.createRef();
     this.playerName = React.createRef();
-    this.state = { 
-			mafiaChatActive: false,
-			activeAccordion: 0,
-			joinGameError: false,
+    this.state = {
+      mafiaChatActive: false,
+      activeAccordion: 0,
+      joinGameError: false,
       joinError: ''
-		};
-	}
-	// componentDidUpdate(prevProps, prevState){
-	// 	prevProps.gamePhase && prevProps.gamePhase[3].activePhase ?
-	// 	this.setState({ activeAccordion: 1 }) : null
-	// }
+    };
+  }
+  // componentDidUpdate(prevProps, prevState){
+  // 	prevProps.gamePhase && prevProps.gamePhase[3].activePhase ?
+  // 	this.setState({ activeAccordion: 1 }) : null
+  // }
   reset = () => {
     Meteor.call('game.resetAll');
     Meteor.call('messages.handleChatSubmit', {
@@ -152,14 +153,14 @@ class Game extends Component {
       let unfilteredMessages = this.props.messages;
       return unfilteredMessages;
     }
-	};
-	handleClick = (e, titleProps) => {
-    const { index } = titleProps
-    const { activeAccordion } = this.state
-    const newIndex = activeAccordion === index ? -1 : index
+  };
+  handleClick = (e, titleProps) => {
+    const { index } = titleProps;
+    const { activeAccordion } = this.state;
+    const newIndex = activeAccordion === index ? -1 : index;
 
-    this.setState({ activeAccordion: newIndex })
-  }
+    this.setState({ activeAccordion: newIndex });
+  };
 
   render() {
     const {
@@ -168,23 +169,24 @@ class Game extends Component {
       messages,
       gamePhase,
       currentUser
-		} = this.props;
-		const { activeAccordion } = this.state
+    } = this.props;
+    const { activeAccordion } = this.state;
 
     return (
       <Container>
-        <Button color='red' onClick={this.reset} content='BOOM' />
-        <Header as='h1' block>
-          Join the Township. Current population: {this.props.township.length}/6
+        <Button color="red" onClick={this.reset} content="BOOM" />
+        <Header as="h1" block>
+          Join the Township. Current population: {this.props.township.length}
+          /6
         </Header>
         {Mafia.find({ player: currentUserId }).count() === 0 ? (
           <Form error={this.state.joinGameError}>
             <Form.Field>
               <input
-                type = 'text'
-                placeholder = "What's your name?"
-                ref = {this.playerName}
-                onKeyDown = {event => {
+                type="text"
+                placeholder="What's your name?"
+                ref={this.playerName}
+                onKeyDown={event => {
                   if (event.key == 'Enter') {
                     this.joinGame();
                   }
@@ -192,96 +194,112 @@ class Game extends Component {
               />
               <Message
                 error
-                header='Error in Joining'
+                header="Error in Joining"
                 content={this.state.joinError}
               />
             </Form.Field>
           </Form>
         ) : (
-					<div>
+          <div>
             <Header as="h3">Welcome to the game</Header>
             {/* <Header as="h2"> */}
-              <PlayerCard currentUser={currentUser} />
+            <PlayerCard currentUser={currentUser} />
             {/* </Header> */}
-						<Accordion styled>
-						<Accordion.Title active={activeAccordion === 0} index={0} onClick={this.handleClick}>
-							<Icon name="dropdown" />
-							The Township
-						</Accordion.Title>
-            <Accordion.Content active={activeAccordion === 0}>
-              <PlayerList township={township} />
-            </Accordion.Content>
-						<Accordion.Title active={activeAccordion === 1} index={1} onClick={this.handleClick}>
-							<Icon name="dropdown" />
-							Chat Area
-						</Accordion.Title>
-            <Accordion.Content active={activeAccordion === 1}>
-              <Chatbox messages={messages} />
-              <ChatInput
-                inputRef={this.inputRef}
-                handleChatSubmit={
-                  this.state.mafiaChatActive
-                    ? this.handleMafiaChatSubmit
-                    : this.handleChatSubmit
-                }
-                isDisabled={
-                  (currentUser[0].role !== 'mafia' &&
-                    gamePhase.length >= 5 &&
-                    gamePhase[2].activePhase) ||
-                  !currentUser[0].alive
-                    ? true
-                    : false
-                }
-                currentUser={currentUser}
-                toggleMafiaChat={this.toggleMafiaChat}
-              />
-            </Accordion.Content>
-            {(gamePhase.length >= 5 && !gamePhase[2].activePhase) ||
-            this.props.currentUser[0].hasActed ||
-            !this.props.currentUser[0].alive ? (
-              ''
-            ) : (
-							<div>
-							<Accordion.Title active={activeAccordion === 2} index={2} onClick={this.handleClick}>
-								<Icon name="dropdown" />
-								Time to Act!
-							</Accordion.Title>
-              <Accordion.Content active={activeAccordion === 2}>
-                <Buttons
-                  township={township}
+            <Accordion styled>
+              <Accordion.Title
+                active={activeAccordion === 0}
+                index={0}
+                onClick={this.handleClick}
+              >
+                <Icon name="dropdown" />
+                The Township
+              </Accordion.Title>
+              <Accordion.Content active={activeAccordion === 0}>
+                <PlayerList township={township} />
+              </Accordion.Content>
+              <Accordion.Title
+                active={activeAccordion === 1}
+                index={1}
+                onClick={this.handleClick}
+              >
+                <Icon name="dropdown" />
+                Chat Area
+              </Accordion.Title>
+              <Accordion.Content active={activeAccordion === 1}>
+                <Chatbox messages={messages} />
+                <ChatInput
+                  inputRef={this.inputRef}
+                  handleChatSubmit={
+                    this.state.mafiaChatActive
+                      ? this.handleMafiaChatSubmit
+                      : this.handleChatSubmit
+                  }
+                  isDisabled={
+                    (currentUser[0].role !== 'mafia' &&
+                      gamePhase.length >= 5 &&
+                      gamePhase[2].activePhase) ||
+                    !currentUser[0].alive
+                      ? true
+                      : false
+                  }
                   currentUser={currentUser}
-                  setTarget={this.setTarget}
-                  setSaved={this.setSaved}
-                  investigate={this.investigate}
+                  toggleMafiaChat={this.toggleMafiaChat}
                 />
               </Accordion.Content>
-							</div>
-            )}
-            {gamePhase.length >= 5 &&
-            gamePhase[4].activePhase &&
-            !this.props.currentUser[0].hasActed &&
-            this.props.currentUser[0].alive ? (
-							<div>
-								<Accordion.Title active={activeAccordion === 2} index={2} onClick={this.handleClick}>
-									<Icon name="dropdown" />
-									Time to Act!
-								</Accordion.Title>
-								<Accordion.Content active={activeAccordion === 2}>
-									<DayButtons
-										township={township}
-										currentUser={currentUser}
-										setLynchTarget={this.setLynchTarget}
-									/>
-								</Accordion.Content>
-							</div>	
-            ) : (
-              ''
-            )}
-          </Accordion>
-					</div>
+              {(gamePhase.length >= 5 && !gamePhase[2].activePhase) ||
+              this.props.currentUser[0].hasActed ||
+              !this.props.currentUser[0].alive ? (
+                ''
+              ) : (
+                <div>
+                  <Accordion.Title
+                    active={activeAccordion === 2}
+                    index={2}
+                    onClick={this.handleClick}
+                  >
+                    <Icon name="dropdown" />
+                    Time to Act!
+                  </Accordion.Title>
+                  <Accordion.Content active={activeAccordion === 2}>
+                    <Buttons
+                      township={township}
+                      currentUser={currentUser}
+                      setTarget={this.setTarget}
+                      setSaved={this.setSaved}
+                      investigate={this.investigate}
+                    />
+                  </Accordion.Content>
+                </div>
+              )}
+              {gamePhase.length >= 5 &&
+              gamePhase[4].activePhase &&
+              !this.props.currentUser[0].hasActed &&
+              this.props.currentUser[0].alive ? (
+                <div>
+                  <Accordion.Title
+                    active={activeAccordion === 2}
+                    index={2}
+                    onClick={this.handleClick}
+                  >
+                    <Icon name="dropdown" />
+                    Time to Act!
+                  </Accordion.Title>
+                  <Accordion.Content active={activeAccordion === 2}>
+                    <DayButtons
+                      township={township}
+                      currentUser={currentUser}
+                      setLynchTarget={this.setLynchTarget}
+                    />
+                  </Accordion.Content>
+                </div>
+              ) : (
+                ''
+              )}
+            </Accordion>
+          </div>
         )}
       </Container>
-		);
+    );
   }
 }
 export default withTracker(() => {
