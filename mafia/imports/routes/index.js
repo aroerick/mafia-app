@@ -6,7 +6,6 @@ import Victory from '../pages/Victory';
 import Start from '../pages/Start';
 
 export default ({ gamePhase }) => {
-  console.log(gamePhase.length)
   if (gamePhase.length >= 7 && gamePhase[5].activePhase) {
     return (
       <Switch>

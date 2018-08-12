@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Mafia } from '../../api/mafia';
-import { GamePhase } from '../../api/gamePhase';
-import { Button } from 'semantic-ui-react';
+import { GamePhase } from '../../api/mafia';
+import { Button, Header } from 'semantic-ui-react';
 class Victory extends Component {
   reset = () => {
     Meteor.call('game.resetAll');
@@ -19,13 +19,22 @@ class Victory extends Component {
     const { gamePhase, currentUser } = this.props;
     return (
       <div>
-        <div>{currentUser[0] ? currentUser[0].name : ''}</div>
+        {/* <div>{currentUser[0] ? currentUser[0].name : ''}</div> */}
         {gamePhase[5] && gamePhase[5].winner === 'villagers' ? (
-          <div>this villagers won</div>
+          <Header as="h1" block>
+            Villagers Win!
+          </Header>
         ) : (
-          <div>the mafia won</div>
+          <Header as="h1" block>
+            Mafia Win!
+          </Header>
         )}
-        <Button type="submit" color="red" onClick={this.reset} content="BOOM" />
+        <Button
+          type="submit"
+          color="red"
+          onClick={this.reset}
+          content="Play Again"
+        />
       </div>
     );
   }

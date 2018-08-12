@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Mafia } from '../../api/mafia';
 import { Messages } from '../../api/messages';
-import { GamePhase } from '../../api/gamePhase';
+import { GamePhase } from '../../api/mafia';
 import PlayerList from '../../ui/components/PlayerList';
 import PlayerCard from '../../ui/components/PlayerCard';
 import Chatbox from '../../ui/components/Chatbox';
@@ -89,26 +89,28 @@ class Game extends Component {
     }
   };
   setTarget = (villager, currentUser) => {
+    Meteor.call('player.hasActed', currentUser);
     Meteor.call('player.setTarget', villager);
     Meteor.call('messages.handleChatSubmit', {
       sender: 'Narrator',
       recipient: 'Mafia',
       text: `You've targeted ${villager.name} for execution`
     });
-    Meteor.call('player.hasActed', currentUser);
+
     Meteor.call('game.updateFeedback');
   };
   setSaved = (villager, currentUser) => {
+    Meteor.call('player.hasActed', currentUser);
     Meteor.call('player.setSaved', villager);
     Meteor.call('messages.handleChatSubmit', {
       sender: 'Narrator',
       recipient: 'Doctor',
       text: `You've made sure ${villager.name} will make it through the night`
     });
-    Meteor.call('player.hasActed', currentUser);
     Meteor.call('game.updateFeedback');
   };
   investigate = (villager, currentUser) => {
+    Meteor.call('player.hasActed', currentUser);
     Meteor.call('player.checkMafia', villager, (error, result) => {
       result[0].role === 'mafia'
         ? Meteor.call('messages.handleChatSubmit', {
@@ -122,12 +124,14 @@ class Game extends Component {
             text: `You have no reason to suspect ${villager.name}`
           });
     });
-    Meteor.call('player.hasActed', currentUser);
+
     Meteor.call('game.updateFeedback');
   };
   setLynchTarget = (villager, currentUser) => {
+    Meteor.call('player.hasActed', currentUser);
+
     if (villager === '') {
-      // Meteor.call('player.hasActed', currentUser);
+      Meteor.call('player.hasActed', currentUser);
       Meteor.call('game.updateDaytimeFeedback');
     } else {
       Meteor.call('player.setLynchTarget', villager);
@@ -138,7 +142,6 @@ class Game extends Component {
       });
       Meteor.call('game.updateDaytimeFeedback');
     }
-    Meteor.call('player.hasActed', currentUser);
   };
   filterMessages = role => {
     if (role != 'mafia') {
