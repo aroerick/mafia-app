@@ -242,7 +242,7 @@ Meteor.methods({
         text:
           'The hustle and bustle of the night has died down.  The dawn is nigh.  On the morning of the new day, a meeting is to be held with the township.'
       });
-      Meteor.setTimeout(function() {
+      Meteor.setTimeout( async function() {
         // Mafia split their vote - nobody dies.  Targeted and saved are reset.
         if (Mafia.find({ targeted: true }).count() > 1) {
           Messages.insert({
@@ -270,8 +270,9 @@ Meteor.methods({
               $and: [{ role: 'doctor' }, { alive: true }]
             }).count() === 1
           ) {
-            let targeted = Mafia.find({ targeted: true }).fetch();
-            let saved = Mafia.find({ saved: true }).fetch();
+            targeted = await Mafia.find({ targeted: true }).fetch();
+            saved = await Mafia.find({ saved: true }).fetch();
+            console.log(saved[0])
             if (saved[0].name === targeted[0].name) {
               // let villager = Mafia.find({ targeted: true }).fetch();
 
@@ -294,7 +295,8 @@ Meteor.methods({
               Mafia.find({ targeted: true }).fetch() !==
               Mafia.find({ saved: true }).fetch()
             ) {
-              let targeted = Mafia.find({ targeted: true }).fetch();
+              let targeted = await Mafia.find({ targeted: true }).fetch();
+              console.log(targeted[0])
 
               Messages.insert({
                 sender: 'Narrator',
@@ -318,7 +320,7 @@ Meteor.methods({
             }
             //IF THE DOCTOR IS DEAD, JUST KILL THE TARGET
           } else {
-            let targeted = Mafia.find({ targeted: true }).fetch();
+            let targeted = await Mafia.find({ targeted: true }).fetch();
 
             Messages.insert({
               sender: 'Narrator',
