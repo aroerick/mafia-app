@@ -6,6 +6,7 @@ const PlayerCard = ({ currentUser }) => {
   roleTitle = '';
   roleName = '';
   color = '';
+  image = '';
   switch (currentUser[0].role) {
     case 'mafia':
       text =
@@ -13,6 +14,7 @@ const PlayerCard = ({ currentUser }) => {
       roleTitle = 'a Mafioso';
       roleName = 'Mafia';
       color = 'red';
+      image = 'https://i.imgur.com/6VWBxfU.png';
       break;
     case 'doctor':
       text =
@@ -20,6 +22,7 @@ const PlayerCard = ({ currentUser }) => {
       roleTitle = 'the Doctor';
       roleName = 'Doctor';
       color = 'teal';
+      image = 'https://i.imgur.com/5hhxES1.png';
       break;
     case 'detective':
       text =
@@ -27,6 +30,7 @@ const PlayerCard = ({ currentUser }) => {
       roleTitle = 'the Detective';
       roleName = 'Detective';
       color = 'yellow';
+      image = 'https://i.imgur.com/NSQkODv.png';
       break;
     default:
       text =
@@ -34,13 +38,13 @@ const PlayerCard = ({ currentUser }) => {
       roleTitle = 'a Civilian';
       roleName = 'Civilian';
       color = 'purple';
+      image = 'https://i.imgur.com/69zvGYQ.png';
   }
   return (
     <Modal
       trigger={
         <Button
           fluid
-          // basic
           color={color}
           icon
           labelPosition="right"
@@ -53,11 +57,7 @@ const PlayerCard = ({ currentUser }) => {
     >
       <Modal.Header>{currentUser[0].name}</Modal.Header>
       <Modal.Content image>
-        <Image
-          wrapped
-          size="medium"
-          src="https://react.semantic-ui.com/images/avatar/large/rachel.png"
-        />
+        <Image wrapped src={image} />
         <Modal.Description>
           <Header>{roleName}</Header>
           <p>{text}</p>
