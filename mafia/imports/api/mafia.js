@@ -272,7 +272,7 @@ Meteor.methods({
           ) {
             targeted = await Mafia.find({ targeted: true }).fetch();
             saved = await Mafia.find({ saved: true }).fetch();
-            console.log(saved[0])
+
             if (saved[0].name === targeted[0].name) {
               // let villager = Mafia.find({ targeted: true }).fetch();
 
@@ -295,8 +295,7 @@ Meteor.methods({
               Mafia.find({ targeted: true }).fetch() !==
               Mafia.find({ saved: true }).fetch()
             ) {
-              let targeted = await Mafia.find({ targeted: true }).fetch();
-              console.log(targeted[0])
+              targeted = await Mafia.find({ targeted: true }).fetch();
 
               Messages.insert({
                 sender: 'Narrator',
@@ -320,7 +319,7 @@ Meteor.methods({
             }
             //IF THE DOCTOR IS DEAD, JUST KILL THE TARGET
           } else {
-            let targeted = await Mafia.find({ targeted: true }).fetch();
+            targeted = await Mafia.find({ targeted: true }).fetch();
 
             Messages.insert({
               sender: 'Narrator',
