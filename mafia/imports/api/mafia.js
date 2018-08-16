@@ -51,6 +51,163 @@ if (Meteor.isServer) {
   });
 }
 
+timeoutOkay = () => {
+  Meteor.setTimeout(async function() {
+    // Mafia split their vote - nobody dies.  Targeted and saved are reset.
+    if (Mafia.find({ targeted: true }).count() > 1) {
+      Messages.insert({
+        sender: 'Narrator',
+        recipient: 'Everyone',
+        text: `Lucky for this township, it appears the mafia don't have their act together.  Nobody has died tonight.`
+      });
+      Mafia.update(
+        { targeted: true },
+        { $set: { targeted: false } },
+        { multi: true }
+      );
+      Mafia.update({ saved: true }, { $set: { saved: false } });
+      Mafia.update(
+        { hasActed: true },
+        { $set: { hasActed: false } },
+        { multi: true }
+      );
+    }
+    // Mafia picked the same villager as the doctor.  Villager lives.  Targeted and saved are reset.
+    else if (Mafia.find({ targeted: true }).count() === 1) {
+      //IF THE DOCTOR IS ALIVE - THEN CHECK SAVED.
+      if (
+        Mafia.find({
+          $and: [{ role: 'doctor' }, { alive: true }]
+        }).count() === 1
+      ) {
+        targeted = await Mafia.find({ targeted: true }).fetch();
+        saved = await Mafia.find({ saved: true }).fetch();
+        console.log(saved[0]);
+        if (saved[0].name === targeted[0].name) {
+          // let villager = Mafia.find({ targeted: true }).fetch();
+
+          Messages.insert({
+            sender: 'Narrator',
+            recipient: 'Everyone',
+            text: `${
+              saved[0].name
+            } hosted a party at their place last night... the doctor was there... the mafia was there... nobody was up to any funny business`
+          });
+          Mafia.update({ targeted: true }, { $set: { targeted: false } });
+          Mafia.update({ saved: true }, { $set: { saved: false } });
+          Mafia.update(
+            { hasActed: true },
+            { $set: { hasActed: false } },
+            { multi: true }
+          );
+          // Mafia and doctor visited different people.  The villager visited by the mafia has died.
+        } else if (
+          Mafia.find({ targeted: true }).fetch() !==
+          Mafia.find({ saved: true }).fetch()
+        ) {
+          let targeted = await Mafia.find({ targeted: true }).fetch();
+          console.log(targeted[0]);
+
+          Messages.insert({
+            sender: 'Narrator',
+            recipient: 'Everyone',
+            text: `We noticed ${
+              targeted[0].name
+            } didnt show up to the morning meeting.  There's no trace of them to be found and their home is a wrangled disaster.  What poor misfortune befell our poor ${
+              targeted[0].name
+            }??`
+          });
+          Mafia.update(
+            { targeted: true },
+            { $set: { alive: false, targeted: false } }
+          );
+          Mafia.update({ saved: true }, { $set: { saved: false } });
+          Mafia.update(
+            { hasActed: true },
+            { $set: { hasActed: false } },
+            { multi: true }
+          );
+        }
+        //IF THE DOCTOR IS DEAD, JUST KILL THE TARGET
+      } else {
+        let targeted = await Mafia.find({ targeted: true }).fetch();
+
+        Messages.insert({
+          sender: 'Narrator',
+          recipient: 'Everyone',
+          text: `We noticed ${
+            targeted[0].name
+          } didnt show up to the morning meeting.  There's no trace of them to be found and their home is a wrangled disaster.  What poor misfortune befell our poor ${
+            targeted[0].name
+          }??`
+        });
+        Mafia.update(
+          { targeted: true },
+          { $set: { alive: false, targeted: false } }
+        );
+        Mafia.update({ saved: true }, { $set: { saved: false } });
+        Mafia.update(
+          { hasActed: true },
+          { $set: { hasActed: false } },
+          { multi: true }
+        );
+      }
+    }
+    //ALL PEOPLE DEAD OR ALIVE NOW. DID ANYONE WIN?
+    //VILLAGER WIN
+    if (
+      Mafia.find({ $and: [{ role: 'mafia' }, { alive: true }] }).count() === 0
+    ) {
+      GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
+      GamePhase.update(
+        { phase: 6 },
+        { $set: { winner: 'villagers', activePhase: true } }
+      );
+      Messages.insert({
+        sender: 'Narrator',
+        recipient: 'Everyone',
+        text: `Good job township.  Y'all have successfully saved yourselves from the mafia.  No mafia remain.`
+      });
+      //MAFIA WIN
+    } else if (
+      Mafia.find({ $and: [{ role: 'mafia' }, { alive: true }] }).count() >=
+        Mafia.find({
+          $and: [{ role: { $not: /mafia/ } }, { alive: true }]
+        }).count() &&
+      Mafia.find({
+        $and: [{ role: { $not: /mafia/ } }, { alive: true }]
+      }).count() < 2
+    ) {
+      GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
+      GamePhase.update(
+        { phase: 6 },
+        { $set: { winner: 'mafia', activePhase: true } }
+      );
+      Messages.insert({
+        sender: 'Narrator',
+        recipient: 'Everyone',
+        text: `Good job mafia.  You own this town.  Mafia outnumber the villagers.`
+      });
+      //IF NOBODY WINS. PROOCED BACK TO PHASE 5 - DAY LYNCHING
+    } else {
+      GamePhase.update({ phase: 3 }, { $set: { feedback: 0 } });
+      GamePhase.update({ phase: 4 }, { $set: { activePhase: false } });
+      GamePhase.update({ phase: 5 }, { $set: { activePhase: true } });
+      Mafia.update(
+        { hasActed: true },
+        { $set: { hasActed: false } },
+        { multi: true }
+      );
+
+      Messages.insert({
+        sender: 'Narrator',
+        recipient: 'Everyone',
+        text: `The town still feels strange.  Somebody is here who's looking to start trouble.  Perhaps we should get rid of them?  What say the town people?`
+      });
+    }
+  }, 2000);
+};
+
 let roleArr = ['mafia', 'doctor', 'detective', 'mafia', 'civilian', 'civilian'];
 // shuffler = arr => {
 //   // Special thanks to CoolAJ86
@@ -234,7 +391,9 @@ Meteor.methods({
       }).count() <= feedback
     ) {
       GamePhase.update({ phase: 3 }, { $set: { activePhase: false } });
-      GamePhase.update({ phase: 4 }, { $set: { activePhase: true } });
+      GamePhase.update({ phase: 4 }, { $set: { activePhase: true } }, () =>
+        timeoutOkay()
+      );
 
       Messages.insert({
         sender: 'Narrator',
@@ -242,161 +401,6 @@ Meteor.methods({
         text:
           'The hustle and bustle of the night has died down.  The dawn is nigh.  On the morning of the new day, a meeting is to be held with the township.'
       });
-      Meteor.setTimeout( async function() {
-        // Mafia split their vote - nobody dies.  Targeted and saved are reset.
-        if (Mafia.find({ targeted: true }).count() > 1) {
-          Messages.insert({
-            sender: 'Narrator',
-            recipient: 'Everyone',
-            text: `Lucky for this township, it appears the mafia don't have their act together.  Nobody has died tonight.`
-          });
-          Mafia.update(
-            { targeted: true },
-            { $set: { targeted: false } },
-            { multi: true }
-          );
-          Mafia.update({ saved: true }, { $set: { saved: false } });
-          Mafia.update(
-            { hasActed: true },
-            { $set: { hasActed: false } },
-            { multi: true }
-          );
-        }
-        // Mafia picked the same villager as the doctor.  Villager lives.  Targeted and saved are reset.
-        else if (Mafia.find({ targeted: true }).count() === 1) {
-          //IF THE DOCTOR IS ALIVE - THEN CHECK SAVED.
-          if (
-            Mafia.find({
-              $and: [{ role: 'doctor' }, { alive: true }]
-            }).count() === 1
-          ) {
-            targeted = await Mafia.find({ targeted: true }).fetch();
-            saved = await Mafia.find({ saved: true }).fetch();
-            console.log(saved[0])
-            if (saved[0].name === targeted[0].name) {
-              // let villager = Mafia.find({ targeted: true }).fetch();
-
-              Messages.insert({
-                sender: 'Narrator',
-                recipient: 'Everyone',
-                text: `${
-                  saved[0].name
-                } hosted a party at their place last night... the doctor was there... the mafia was there... nobody was up to any funny business`
-              });
-              Mafia.update({ targeted: true }, { $set: { targeted: false } });
-              Mafia.update({ saved: true }, { $set: { saved: false } });
-              Mafia.update(
-                { hasActed: true },
-                { $set: { hasActed: false } },
-                { multi: true }
-              );
-              // Mafia and doctor visited different people.  The villager visited by the mafia has died.
-            } else if (
-              Mafia.find({ targeted: true }).fetch() !==
-              Mafia.find({ saved: true }).fetch()
-            ) {
-              let targeted = await Mafia.find({ targeted: true }).fetch();
-              console.log(targeted[0])
-
-              Messages.insert({
-                sender: 'Narrator',
-                recipient: 'Everyone',
-                text: `We noticed ${
-                  targeted[0].name
-                } didnt show up to the morning meeting.  There's no trace of them to be found and their home is a wrangled disaster.  What poor misfortune befell our poor ${
-                  targeted[0].name
-                }??`
-              });
-              Mafia.update(
-                { targeted: true },
-                { $set: { alive: false, targeted: false } }
-              );
-              Mafia.update({ saved: true }, { $set: { saved: false } });
-              Mafia.update(
-                { hasActed: true },
-                { $set: { hasActed: false } },
-                { multi: true }
-              );
-            }
-            //IF THE DOCTOR IS DEAD, JUST KILL THE TARGET
-          } else {
-            let targeted = await Mafia.find({ targeted: true }).fetch();
-
-            Messages.insert({
-              sender: 'Narrator',
-              recipient: 'Everyone',
-              text: `We noticed ${
-                targeted[0].name
-              } didnt show up to the morning meeting.  There's no trace of them to be found and their home is a wrangled disaster.  What poor misfortune befell our poor ${
-                targeted[0].name
-              }??`
-            });
-            Mafia.update(
-              { targeted: true },
-              { $set: { alive: false, targeted: false } }
-            );
-            Mafia.update({ saved: true }, { $set: { saved: false } });
-            Mafia.update(
-              { hasActed: true },
-              { $set: { hasActed: false } },
-              { multi: true }
-            );
-          }
-        }
-        //ALL PEOPLE DEAD OR ALIVE NOW. DID ANYONE WIN?
-        //VILLAGER WIN
-        if (
-          Mafia.find({ $and: [{ role: 'mafia' }, { alive: true }] }).count() ===
-          0
-        ) {
-          GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
-          GamePhase.update(
-            { phase: 6 },
-            { $set: { winner: 'villagers', activePhase: true } }
-          );
-          Messages.insert({
-            sender: 'Narrator',
-            recipient: 'Everyone',
-            text: `Good job township.  Y'all have successfully saved yourselves from the mafia.  No mafia remain.`
-          });
-          //MAFIA WIN
-        } else if (
-          Mafia.find({ $and: [{ role: 'mafia' }, { alive: true }] }).count() >=
-            Mafia.find({
-              $and: [{ role: { $not: /mafia/ } }, { alive: true }]
-            }).count() &&
-          Mafia.find({
-            $and: [{ role: { $not: /mafia/ } }, { alive: true }]
-          }).count() < 2
-        ) {
-          GamePhase.update({ phase: 5 }, { $set: { activePhase: false } });
-          GamePhase.update(
-            { phase: 6 },
-            { $set: { winner: 'mafia', activePhase: true } }
-          );
-          Messages.insert({
-            sender: 'Narrator',
-            recipient: 'Everyone',
-            text: `Good job mafia.  You own this town.  Mafia outnumber the villagers.`
-          });
-          //IF NOBODY WINS. PROOCED BACK TO PHASE 5 - DAY LYNCHING
-        } else {
-          GamePhase.update({ phase: 3 }, { $set: { feedback: 0 } });
-          GamePhase.update({ phase: 4 }, { $set: { activePhase: false } });
-          GamePhase.update({ phase: 5 }, { $set: { activePhase: true } });
-          Mafia.update(
-            { hasActed: true },
-            { $set: { hasActed: false } },
-            { multi: true }
-          );
-
-          Messages.insert({
-            sender: 'Narrator',
-            recipient: 'Everyone',
-            text: `The town still feels strange.  Somebody is here who's looking to start trouble.  Perhaps we should get rid of them?  What say the town people?`
-          });
-        }
-      }, 10000);
     }
   },
 
